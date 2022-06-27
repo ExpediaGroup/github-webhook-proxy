@@ -1,20 +1,18 @@
-name: Release
-
 on:
   push:
     branches:
       - main
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
-      - run: |
-          npm install semantic-release semantic-release/git
-          npx semantic-release --debug --no-ci
+
+      - name: Create Release
+        run: npx semantic-release --debug --no-ci
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}

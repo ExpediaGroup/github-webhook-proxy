@@ -1,0 +1,53 @@
+name: Check Github IP Ranges
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *" # once a day
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+
+      - name: Generate GitHub IP Ranges
+        run: echo "locals {github_hooks_ip_ranges = $(curl https://api.github.com/meta | jq -c .hooks)}" > github-hooks-ip-ranges.tf
+
+      - name: Setup
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Format
+        id: fmt
+        run: terraform fmt
+
+      - name: Check if IP Ranges Have Changed
+        id: ip-check
+        run: |
+          if [[ $(git status --porcelain) ]]; then
+            echo "New GitHub IP ranges detected."
+            git status
+            git fetch origin
+            git config user.name "${{ github.actor }}"
+            git config user.email "${{ github.actor }}@users.noreply.github.com"
+            git checkout -b github-ip-range-update
+            git add github-ip-ranges.json
+            git commit -m "chore: committing latest github ip ranges"
+            git push -u origin github-ip-range-update
+            echo "::set-output name=NEW_IP_RANGES::true"
+          fi
+
+      - if: steps.ip-check.outputs.NEW_IP_RANGES == 'true'
+        name: Open Pull Request if IP Ranges Have Changed
+        uses: ExpediaGroup/github-helpers@v1
+        with:
+          helper: create-pr
+          title: 'chore: update Github IP ranges'
+          body: The GitHub IP ranges for hooks have changed on the [meta endpoint](https://api.github.com/meta).
+          head: github-ip-range-update
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}

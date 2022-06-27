@@ -1,0 +1,27 @@
+name: semantic-versioning
+description: Semantic release support for tagging `github-webhook-proxy` with semantic versioning.
+license: ISC
+plugins:
+  - - '@semantic-release/commit-analyzer'
+    - preset: angular
+      releaseRules:
+        - breaking: true
+          release: major
+        - type: breaking
+          release: major
+        - type: docs
+          release: patch
+        - type: refactor
+          release: patch
+        - scope: no-release
+          release: false
+  - '@semantic-release/release-notes-generator'
+  - - '@semantic-release/github'
+    - assets:
+        - proxy-lambda.zip
+release:
+  plugins:
+    - '@semantic-release/commit-analyzer'
+    - '@semantic-release/release-notes-generator'
+  branches:
+    - main
