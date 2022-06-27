@@ -16,3 +16,5 @@ plugins:
   - - '@semantic-release/github'
     - assets:
         - proxy-lambda.zip
+branches:
+  - main
