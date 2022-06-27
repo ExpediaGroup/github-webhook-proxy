@@ -142,17 +142,18 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_api_gateway_domain_name"></a> [api\_gateway\_domain\_name](#input\_api\_gateway\_domain\_name) | Domain name for API gateway domain mapping | `string` | `null` | no |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | The AWS region to deploy to (e.g. us-east-1) | `string` | n/a | yes |
 | <a name="input_certificate_arn"></a> [certificate\_arn](#input\_certificate\_arn) | Certificate ARN for API gateway domain name | `string` | `null` | no |
 | <a name="input_custom_tags"></a> [custom\_tags](#input\_custom\_tags) | Additional tags to be applied to all resources applied by this module. | `map(string)` | `{}` | no |
-| <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | Domain name for API gateway domain mapping | `string` | `null` | no |
-| <a name="input_enterprise_managed_user_suffix"></a> [enterprise\_managed\_user\_suffix](#input\_enterprise\_managed\_user\_suffix) | Managed user suffix used for central identity management on GHEC | `string` | `null` | no |
+| <a name="input_enterprise_managed_user_suffix"></a> [enterprise\_managed\_user\_suffix](#input\_enterprise\_managed\_user\_suffix) | Managed user suffix used for central identity management on GHEC | `string` | `""` | no |
 | <a name="input_extra_role_policy"></a> [extra\_role\_policy](#input\_extra\_role\_policy) | jsonencoded string policy to include in the proxy lambda role | `string` | `null` | no |
 | <a name="input_lambda_bucket_name"></a> [lambda\_bucket\_name](#input\_lambda\_bucket\_name) | S3 bucket with lambda and layer archives | `string` | n/a | yes |
 | <a name="input_lambda_layer_arn"></a> [lambda\_layer\_arn](#input\_lambda\_layer\_arn) | Lambda layer ARN for data store | `string` | n/a | yes |
 | <a name="input_lambda_timeout_seconds"></a> [lambda\_timeout\_seconds](#input\_lambda\_timeout\_seconds) | Number of seconds until lambda times out | `number` | `10` | no |
 | <a name="input_log_retention_days"></a> [log\_retention\_days](#input\_log\_retention\_days) | Number of days CloudWatch will retain logs | `number` | `7` | no |
 | <a name="input_resource_prefix"></a> [resource\_prefix](#input\_resource\_prefix) | Prefix of webhook proxy resources | `string` | `"gwp"` | no |
+| <a name="input_route_53_record_name"></a> [route\_53\_record\_name](#input\_route\_53\_record\_name) | Record name for Route 53 record creation | `string` | `null` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | subnet\_ids for Lambda VPC config | `list(string)` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC id for Lambda VPC config | `string` | n/a | yes |
 | <a name="input_zone_id"></a> [zone\_id](#input\_zone\_id) | Zone id for Route53 record | `string` | `null` | no |
