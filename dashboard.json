@@ -1,0 +1,100 @@
+{
+  "widgets": [
+    {
+      "height": 6,
+      "width": 10,
+      "y": 0,
+      "x": 0,
+      "type": "log",
+      "properties": {
+        "query": "SOURCE '/aws/lambda/gwp-default-proxy' | filter @message like /Forwarding webhook for url/\n| parse @message \"Forwarding webhook for url: *\" as url\n| stats count() by url",
+        "region": "us-west-2",
+        "stacked": false,
+        "title": "Proxy Destinations",
+        "view": "table"
+      }
+    },
+    {
+      "height": 6,
+      "width": 8,
+      "y": 0,
+      "x": 10,
+      "type": "log",
+      "properties": {
+        "query": "SOURCE '/aws/apigateway/gwp-default-ingress' | fields status\n| stats count() by status\n| sort status asc",
+        "region": "us-west-2",
+        "stacked": false,
+        "title": "API Gateway Response Codes",
+        "view": "bar"
+      }
+    },
+    {
+      "height": 6,
+      "width": 10,
+      "y": 12,
+      "x": 0,
+      "type": "metric",
+      "properties": {
+        "metrics": [
+          [ "AWS/ApiGateway", "Latency", "ApiName", "gwp-default-ingress", "Resource", "/webhook/{endpointId}", "Stage", "v1", "Method", "POST" ],
+          [ ".", "Count", ".", ".", ".", ".", ".", ".", ".", ".", { "visible": false } ],
+          [ ".", "IntegrationLatency", ".", ".", ".", ".", ".", ".", ".", ".", { "visible": false } ],
+          [ ".", "4XXError", ".", ".", ".", ".", ".", ".", ".", ".", { "visible": false } ],
+          [ ".", "5XXError", ".", ".", ".", ".", ".", ".", ".", ".", { "visible": false } ]
+        ],
+        "view": "timeSeries",
+        "region": "us-west-2",
+        "period": 86400,
+        "stat": "Average",
+        "stacked": false,
+        "title": "Execution Time"
+      }
+    },
+    {
+      "height": 6,
+      "width": 10,
+      "y": 6,
+      "x": 0,
+      "type": "metric",
+      "properties": {
+        "metrics": [
+          [ "AWS/ApiGateway", "Count", "ApiName", "gwp-default-ingress", "Resource", "/webhook/{endpointId}", "Stage", "v1", "Method", "POST" ]
+        ],
+        "view": "timeSeries",
+        "region": "us-west-2",
+        "period": 86400,
+        "stat": "Sum",
+        "stacked": false,
+        "title": "Webhooks Received"
+      }
+    },
+    {
+      "height": 6,
+      "width": 6,
+      "y": 0,
+      "x": 18,
+      "type": "log",
+      "properties": {
+        "query": "SOURCE '/aws/lambda/gwp-default-proxy' | fields @message\n| filter @message like /result/\n| parse @message 'result {\"statusCode\":*,' as statusCode\n| stats count() by statusCode",
+        "region": "us-west-2",
+        "stacked": false,
+        "title": "Webhook Response Codes",
+        "view": "bar"
+      }
+    },
+    {
+      "height": 6,
+      "width": 14,
+      "y": 6,
+      "x": 10,
+      "type": "log",
+      "properties": {
+        "query": "SOURCE '/aws/lambda/gwp-default-proxy' | fields @message\n| filter @message like /result/\n| parse @message 'result {\"statusCode\":*,' as statusCode\n| stats count() by bin(1d)",
+        "region": "us-west-2",
+        "stacked": false,
+        "title": "Webhooks Proxied",
+        "view": "timeSeries"
+      }
+    }
+  ]
+}

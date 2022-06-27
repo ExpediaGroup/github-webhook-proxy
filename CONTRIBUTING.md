@@ -20,9 +20,17 @@ where "my-new-feature" describes what you're working on.
 
 ### 3. Add tests for any bug fixes or new functionality
 
+All functions must be tested with a unit test. Please follow the existing convention of one exported function per file with a corresponding file to test it. Run tests using `yarn test`, or using the [Jest CLI](https://jestjs.io/docs/cli).
+
+There is also an integration test present in the [test workflow](./.github/workflows/test.yaml), which will actually run this Github Action using the code from this repository. This allows you to test your change to the Github Action right within the pull request you make.
+
+Unfortunately, Github Action projects cannot be run locally. You must rely on the unit and integration tests to run your code.
+
 ### 4. Check code style
 
-Before opening a pull request, ensure that your new code conforms to the code style as defined by the [EditorConfig](https://editorconfig.org/) file in the root of the project.
+Before opening a pull request, ensure that you have installed all dependencies so the pre-commit hooks will run.
+These hooks will run ESLint according to the [.eslintrc.json](./.eslintrc.json),
+style the code according to the [.prettierrc.json](./.prettierrc.json), and package the code into the `dist` directory which is required for Github Actions code.
 
 ### 5. Add documentation for new or updated functionality
 
@@ -40,7 +48,7 @@ Push your changes to your branch and open a pull request against the parent repo
 
 Upon Pull Request submission, your code will be reviewed by the maintainers. They will confirm at least the following:
 
-- Tests run successfully (unit, coverage, integration, style).
-- Contribution policy has been followed.
+-   Tests run successfully (unit, coverage, integration, style).
+-   Contribution policy has been followed.
 
-Two (human) reviewers will need to sign off on your Pull Request before it can be merged.
+One (human) reviewer will need to sign off on your Pull Request before it can be merged.

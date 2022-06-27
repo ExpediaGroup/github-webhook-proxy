@@ -1,14 +1,72 @@
-name: "Test"
+name: Test
+
 on:
   pull_request:
+    branches:
+      - main
 
 jobs:
-  test:
+  lambda:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install
+        run: npm ci
+
+      - name: Format
+        run: npm run format-check
+
+      - name: Test
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-      - uses: actions/setup-python@v2
-      - run: |
-          echo "Execute tests here"
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+
+      - name: Terraform Docs
+        uses: actions/terraform-docs@v1.0.0
+        with:
+          git-push: true
+          output-file: USAGE.md
+
+  terraform:
+    needs: docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Read .terraform-version
+        run: echo TF_VERSION=`cat .terraform-version` >> $GITHUB_ENV
+
+      - name: Setup
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        uses: actions/dflook-terraform-validate@v1
+
+      - name: Terraform FMT
+        uses: actions/dflook-terraform-fmt@v1
+
+      - name: Terraform Lint
+        uses: actions/reviewdog-tflint@v1
+        with:
+          github_token: ${{ secrets.github_token }}
+          fail_on_error: true
