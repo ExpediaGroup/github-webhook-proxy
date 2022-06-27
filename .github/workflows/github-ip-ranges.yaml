@@ -20,7 +20,7 @@ jobs:
         run: echo "locals {github_hooks_ip_ranges = $(curl https://api.github.com/meta | jq -c .hooks)}" > github-hooks-ip-ranges.tf
 
       - name: Setup
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
 
       - name: Format
         id: fmt
