@@ -50,4 +50,4 @@ jobs:
           title: 'chore: update Github IP ranges'
           body: The GitHub IP ranges for hooks have changed on the [meta endpoint](https://api.github.com/meta).
           head: github-ip-range-update
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
