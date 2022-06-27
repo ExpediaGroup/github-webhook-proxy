@@ -18,7 +18,7 @@
     "@types/aws-lambda": "8.10.95",
     "@types/jest": "27.5.0",
     "jest": "28.1.0",
-    "prettier": "2.6.2",
+    "prettier": "2.7.1",
     "ts-jest": "28.0.1"
   },
   "jest": {
