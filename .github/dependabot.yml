@@ -4,11 +4,17 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
+    reviewers:
+      - '@ExpediaGroup/github-webhook-proxy-admins'
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
       interval: 'weekly'
+    reviewers:
+      - '@ExpediaGroup/github-webhook-proxy-admins'
   - package-ecosystem: 'terraform'
     directory: '/'
     schedule:
       interval: 'weekly'
+    reviewers:
+      - '@ExpediaGroup/github-webhook-proxy-admins'
