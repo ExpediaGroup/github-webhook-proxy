@@ -17,7 +17,7 @@ import { requestPayloadIsValid } from './request-payload-is-valid';
 import { destinationHostIsAllowed } from './destination-host-is-allowed';
 import { getHttpsAgent } from './get-https-agent';
 import { parseRequestBody } from './parse-request-body';
-import {isValidUrl} from "./is-valid-url";
+import { isValidUrl } from './is-valid-url';
 
 export async function handler(event: APIGatewayProxyWithLambdaAuthorizerEvent<any>) {
   try {

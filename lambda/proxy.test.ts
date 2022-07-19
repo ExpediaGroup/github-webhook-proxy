@@ -18,7 +18,7 @@ import * as validPayloadUserRepo from '../fixtures/valid-payload-user-repo.json'
 import { readFileSync } from 'fs';
 import { Agent } from 'https';
 import { readFileFromLayer } from './file-readers';
-import {APIGatewayProxyWithLambdaAuthorizerEvent} from "aws-lambda";
+import { APIGatewayProxyWithLambdaAuthorizerEvent } from 'aws-lambda';
 const urlencodedPayload = readFileSync('fixtures/invalid-payload-urlencoded.txt').toString();
 
 jest.mock('axios');
@@ -77,7 +77,7 @@ describe('proxy', () => {
       ...baseEvent,
       headers: {
         ...baseEvent.headers,
-        'content-type': 'application/x-www-form-urlencoded',
+        'content-type': 'application/x-www-form-urlencoded'
       },
       body: urlencodedPayload
     };
