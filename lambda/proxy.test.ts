@@ -49,7 +49,7 @@ const baseEvent = {
     Host: 'some-api.us-west-2.amazonaws.com'
   },
   pathParameters: {
-    endpointId: encodeURIComponent('https://some.host/github-webhook/')
+    endpointId: 'endpoint'
   }
 };
 const fileMap = {
@@ -67,8 +67,9 @@ describe('proxy', () => {
     const event: any = {
       ...baseEvent,
       headers: {
-        ...baseEvent.headers,
-        'content-type': 'application/x-www-form-urlencoded'
+        Accept: '*/*',
+        'content-type': 'application/x-www-form-urlencoded',
+        Host: 'some-api.us-west-2.amazonaws.com'
       },
       body: urlencodedPayload
     };
