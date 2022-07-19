@@ -49,17 +49,17 @@ const baseEvent = {
     Host: 'some-api.us-west-2.amazonaws.com'
   },
   pathParameters: {
-    endpointId: 'endpoint'
+    endpointId: encodeURIComponent('https://some.host/github-webhook/')
   }
 };
 const fileMap = {
-  'allowed-github-orgs.json': JSON.stringify(['Approved-Org', 'Another-Approved-Org']),
   'allowed-destination-hosts.json': JSON.stringify(['approved.host', 'another.approved.host'])
 };
 (readFileFromLayer as jest.Mock).mockImplementation((fileName: string) => fileMap[fileName]);
 
 describe('proxy', () => {
   beforeEach(() => {
+    process.env.ENTERPRISE_SLUG = 'some-enterprise';
     process.env.ENTERPRISE_MANAGED_USER_SUFFIX = undefined;
   });
 
@@ -67,9 +67,8 @@ describe('proxy', () => {
     const event: any = {
       ...baseEvent,
       headers: {
-        Accept: '*/*',
-        'content-type': 'application/x-www-form-urlencoded',
-        Host: 'some-api.us-west-2.amazonaws.com'
+        ...baseEvent.headers,
+        'content-type': 'application/x-www-form-urlencoded'
       },
       body: urlencodedPayload
     };
@@ -78,7 +77,7 @@ describe('proxy', () => {
     expect(axios.post).not.toHaveBeenCalled();
   });
 
-  it('should reject a request with an invalid json payload', async () => {
+  it('should reject a request with an endpointId which is not an encoded URL', async () => {
     const event: any = {
       ...baseEvent,
       body: JSON.stringify(invalidPayload)
@@ -104,18 +103,12 @@ describe('proxy', () => {
     expect(axios.post).toHaveBeenCalled();
   });
 
-  it('should not forward a request that does not have an approved github org or managed user suffix', async () => {
+  it('should not forward a request that does not come from an enterprise or managed user suffix', async () => {
     const destinationUrl = 'https://approved.host/github-webhook/';
     const endpointId = encodeURIComponent(destinationUrl);
     const payload = {
       ...validPayload,
-      repository: {
-        ...validPayload.repository,
-        owner: {
-          ...validPayload.repository.owner,
-          login: 'some-invalid-org_suffix'
-        }
-      }
+      enterprise: undefined
     };
     const event: any = {
       ...baseEvent,
@@ -143,7 +136,7 @@ describe('proxy', () => {
     expect(axios.post).not.toHaveBeenCalled();
   });
 
-  it('should forward a request from an approved host and github org without supplied certs', async () => {
+  it('should forward a request from an enterprise and github org without supplied certs', async () => {
     const destinationUrl = 'https://approved.host/github-webhook/';
     const endpointId = encodeURIComponent(destinationUrl);
     const event: any = {
@@ -162,7 +155,7 @@ describe('proxy', () => {
     expect(result).toEqual(expectedResponseObject);
   });
 
-  it('should forward a request from an approved host and github org with supplied certs', async () => {
+  it('should forward a request from an enterprise and github org with supplied certs', async () => {
     const newFileMap = {
       ...fileMap,
       'ca.pem': 'some ca',
