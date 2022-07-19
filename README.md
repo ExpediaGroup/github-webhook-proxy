@@ -17,7 +17,6 @@ aws s3 cp "${file}" "${s3_destination}/${file}"
 ```
 
 Optionally, you may create a Lambda layer which optionally contains the following files:
-* `allowed-github-orgs.json`: An array of GitHub organizations which webhooks are allowed to originate from. If omitted, all organizations will be allowed.
 * `allowed-destination-hosts.json`: An array of destination hosts that the proxy can forward to. If omitted, all destinations will be allowed.
 * `ca.pem`: A root CA certificate for forwarding to internal destinations with self-signed certs
 * `cert.pem`: A chain certificate for forwarding to internal destinations with self-signed certs
@@ -35,7 +34,7 @@ If the layer is used, its ARN must be passed to the `lambda_layer_arn` Terraform
 ### Example Terraform Module Usage
 ```hcl
 module "github-webhook-proxy" {
-  source     = "git::https://github.com/ExpediaGroup/github-webhook-proxy.git?ref=v1"
+  source     = "git::https://github.com/ExpediaGroup/github-webhook-proxy.git?ref=v2"
   aws_region = var.aws_region
 
   vpc_id     = data.aws_vpc.vpc.id
@@ -43,6 +42,7 @@ module "github-webhook-proxy" {
 
   lambda_bucket_name = local.lambda_bucket_name
   lambda_layer_arn   = aws_lambda_layer_version.proxy_layer.arn
+  enterprise_slug    = 'my_enterprise'
 
   custom_tags = {
     "Application" = "github-webhook-proxy"
@@ -116,10 +116,9 @@ the `endpointId` to make it a valid URL.
 
 The Lambda then performs the following validations:
 
-* The request must have originated from a GitHub repository with an approved GitHub organization, OR the request must
+* The request must have an enterprise slug which matches the `enterprise_slug` environment variable, OR the request must
   come from a personal repository where the username ends in the enterprise managed user suffix (if provided).
-  The list of allowed GitHub orgs is read from `allowed-github-orgs.json` in the Lambda layer,
-  and the user suffix is passed via the `enterprise_managed_user_suffix` Terraform variable.
+  The user suffix is passed via the `enterprise_managed_user_suffix` Terraform variable.
 * The request host must have an approved destination URL host, which is the decoded `endpointId` specified in the request
   URL. The list of allowed destination hosts is read from `allowed-destination-hosts.json` in the Lambda layer.
 

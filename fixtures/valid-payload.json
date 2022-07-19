@@ -126,13 +126,13 @@
   },
   "enterprise": {
     "id": 123,
-    "slug": "some-enterprise",
+    "slug": "some_enterprise",
     "name": "Some Enterprise",
     "node_id": "E_kgDNLDI",
     "avatar_url": "https://avatars.githubusercontent.com/b/11314?v=4",
     "description": null,
     "website_url": null,
-    "html_url": "https://github.com/enterprises/some-enterprise",
+    "html_url": "https://github.com/enterprises/some_enterprise",
     "created_at": "2022-01-31T20:50:21Z",
     "updated_at": "2022-02-03T03:52:22Z"
   },

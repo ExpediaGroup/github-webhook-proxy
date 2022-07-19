@@ -59,7 +59,7 @@ const fileMap = {
 
 describe('proxy', () => {
   beforeEach(() => {
-    process.env.ENTERPRISE_SLUG = 'some-enterprise';
+    process.env.ENTERPRISE_SLUG = 'some_enterprise';
     process.env.ENTERPRISE_MANAGED_USER_SUFFIX = undefined;
   });
 
