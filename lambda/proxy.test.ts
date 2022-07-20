@@ -15,10 +15,10 @@ import { handler } from './proxy';
 import axios, { AxiosResponse } from 'axios';
 import * as validPayload from '../fixtures/valid-payload.json';
 import * as validPayloadUserRepo from '../fixtures/valid-payload-user-repo.json';
-import * as invalidPayload from '../fixtures/invalid-payload.json';
 import { readFileSync } from 'fs';
 import { Agent } from 'https';
 import { readFileFromLayer } from './file-readers';
+import { APIGatewayProxyWithLambdaAuthorizerEvent } from 'aws-lambda';
 const urlencodedPayload = readFileSync('fixtures/invalid-payload-urlencoded.txt').toString();
 
 jest.mock('axios');
@@ -41,7 +41,7 @@ const expectedResponseObject = {
   headers: { response: 'headers' }
 };
 const stringifiedPayload = JSON.stringify(validPayload);
-const baseEvent = {
+const baseEvent: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
   body: stringifiedPayload,
   headers: {
     Accept: '*/*',
@@ -49,8 +49,17 @@ const baseEvent = {
     Host: 'some-api.us-west-2.amazonaws.com'
   },
   pathParameters: {
-    endpointId: 'endpoint'
-  }
+    endpointId: encodeURIComponent('https://approved.host/github-webhook/')
+  },
+  multiValueHeaders: {},
+  httpMethod: 'POST',
+  isBase64Encoded: false,
+  path: '',
+  queryStringParameters: {},
+  multiValueQueryStringParameters: {},
+  stageVariables: {},
+  requestContext: {} as any,
+  resource: ''
 };
 const fileMap = {
   'allowed-github-orgs.json': JSON.stringify(['Approved-Org', 'Another-Approved-Org']),
@@ -60,16 +69,15 @@ const fileMap = {
 
 describe('proxy', () => {
   beforeEach(() => {
-    process.env.ENTERPRISE_MANAGED_USER_SUFFIX = undefined;
+    process.env.ENTERPRISE_MANAGED_USER_SUFFIX = '';
   });
 
   it('should reject a request with an invalid urlencoded payload', async () => {
-    const event: any = {
+    const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
       ...baseEvent,
       headers: {
-        Accept: '*/*',
-        'content-type': 'application/x-www-form-urlencoded',
-        Host: 'some-api.us-west-2.amazonaws.com'
+        ...baseEvent.headers,
+        'content-type': 'application/x-www-form-urlencoded'
       },
       body: urlencodedPayload
     };
@@ -78,10 +86,12 @@ describe('proxy', () => {
     expect(axios.post).not.toHaveBeenCalled();
   });
 
-  it('should reject a request with an invalid json payload', async () => {
-    const event: any = {
+  it('should reject a request with an endpointId which is not an encoded URL', async () => {
+    const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
       ...baseEvent,
-      body: JSON.stringify(invalidPayload)
+      pathParameters: {
+        endpointId: 'some-invalid-endpoint'
+      }
     };
     const result = await handler(event);
     expect(result).toEqual({ statusCode: 403, body: 'Access denied' });
@@ -92,7 +102,7 @@ describe('proxy', () => {
     process.env.ENTERPRISE_MANAGED_USER_SUFFIX = 'suffix';
     const destinationUrl = 'https://approved.host/github-webhook/';
     const endpointId = encodeURIComponent(destinationUrl);
-    const event: any = {
+    const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
       ...baseEvent,
       body: JSON.stringify(validPayloadUserRepo),
       pathParameters: {
@@ -117,7 +127,7 @@ describe('proxy', () => {
         }
       }
     };
-    const event: any = {
+    const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
       ...baseEvent,
       body: JSON.stringify(payload),
       pathParameters: {
@@ -132,7 +142,7 @@ describe('proxy', () => {
   it('should not forward a request that does not have an approved host', async () => {
     const destinationUrl = 'https://not-an-approved.host/github-webhook/';
     const endpointId = encodeURIComponent(destinationUrl);
-    const event: any = {
+    const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
       ...baseEvent,
       pathParameters: {
         endpointId
@@ -146,7 +156,7 @@ describe('proxy', () => {
   it('should forward a request from an approved host and github org without supplied certs', async () => {
     const destinationUrl = 'https://approved.host/github-webhook/';
     const endpointId = encodeURIComponent(destinationUrl);
-    const event: any = {
+    const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
       ...baseEvent,
       pathParameters: {
         endpointId
@@ -171,7 +181,7 @@ describe('proxy', () => {
     (readFileFromLayer as jest.Mock).mockImplementation((fileName: string) => newFileMap[fileName]);
     const destinationUrl = 'https://approved.host/github-webhook/';
     const endpointId = encodeURIComponent(destinationUrl);
-    const event: any = {
+    const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
       ...baseEvent,
       pathParameters: {
         endpointId
@@ -189,7 +199,7 @@ describe('proxy', () => {
   });
 
   it('should return a 404 when no endpointId is found', async () => {
-    const event: any = {
+    const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
       ...baseEvent,
       pathParameters: {}
     };
