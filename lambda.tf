@@ -17,6 +17,7 @@ resource "aws_lambda_function" "proxy" {
   layers            = [var.lambda_layer_arn]
   environment {
     variables = {
+      ENTERPRISE_SLUG = var.enterprise_slug
       ENTERPRISE_MANAGED_USER_SUFFIX = var.enterprise_managed_user_suffix
     }
   }

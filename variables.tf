@@ -35,6 +35,11 @@ variable "enterprise_managed_user_suffix" {
   default     = ""
 }
 
+variable "enterprise_slug" {
+    description = "The name (slug) of the enterprise on GHEC"
+    type        = string
+}
+
 variable "lambda_bucket_name" {
   description = "S3 bucket with lambda and layer archives"
   type        = string

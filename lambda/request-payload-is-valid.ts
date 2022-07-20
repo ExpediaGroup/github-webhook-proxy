@@ -11,25 +11,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { PushEvent } from '@octokit/webhooks-types';
-import { readFileFromLayer } from './file-readers';
+import { EnterprisePushEvent } from './types';
 
-export function requestPayloadIsValid(requestPayload: PushEvent) {
+export function requestPayloadIsValid(requestPayload: EnterprisePushEvent) {
   const {
     repository: {
       owner: { login: githubOrg }
-    }
+    },
+    enterprise
   } = requestPayload;
-  return githubOrgIsAllowed(githubOrg) || githubOrgEndsWithUserSuffix(githubOrg);
+  return requestCameFromValidEnterprise(enterprise) || githubOrgEndsWithUserSuffix(githubOrg);
 }
 
-function githubOrgIsAllowed(githubOrg: string) {
-  const allowedGitHubOrgsContents = readFileFromLayer('allowed-github-orgs.json');
-  if (!allowedGitHubOrgsContents) {
-    return true;
-  }
-  const allowedGitHubOrgs: string[] = JSON.parse(allowedGitHubOrgsContents);
-  return allowedGitHubOrgs.includes(githubOrg);
+function requestCameFromValidEnterprise(enterprise: EnterprisePushEvent['enterprise'] | undefined) {
+  return process.env.ENTERPRISE_SLUG && enterprise?.slug === process.env.ENTERPRISE_SLUG;
 }
 
 function githubOrgEndsWithUserSuffix(githubOrg: string) {

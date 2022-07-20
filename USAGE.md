@@ -147,6 +147,7 @@ No modules.
 | <a name="input_certificate_arn"></a> [certificate\_arn](#input\_certificate\_arn) | Certificate ARN for API gateway domain name | `string` | `null` | no |
 | <a name="input_custom_tags"></a> [custom\_tags](#input\_custom\_tags) | Additional tags to be applied to all resources applied by this module. | `map(string)` | `{}` | no |
 | <a name="input_enterprise_managed_user_suffix"></a> [enterprise\_managed\_user\_suffix](#input\_enterprise\_managed\_user\_suffix) | Managed user suffix used for central identity management on GHEC | `string` | `""` | no |
+| <a name="input_enterprise_slug"></a> [enterprise\_slug](#input\_enterprise\_slug) | The name (slug) of the enterprise on GHEC | `string` | n/a | yes |
 | <a name="input_extra_role_policy"></a> [extra\_role\_policy](#input\_extra\_role\_policy) | jsonencoded string policy to include in the proxy lambda role | `string` | `null` | no |
 | <a name="input_lambda_bucket_name"></a> [lambda\_bucket\_name](#input\_lambda\_bucket\_name) | S3 bucket with lambda and layer archives | `string` | n/a | yes |
 | <a name="input_lambda_layer_arn"></a> [lambda\_layer\_arn](#input\_lambda\_layer\_arn) | Lambda layer ARN for data store | `string` | n/a | yes |
