@@ -18,6 +18,7 @@ import { destinationHostIsAllowed } from './destination-host-is-allowed';
 import { getHttpsAgent } from './get-https-agent';
 import { parseRequestBody } from './parse-request-body';
 import { EnterprisePushEvent } from './types';
+import { isValidUrl } from './is-valid-url';
 
 export async function handler(event: APIGatewayProxyWithLambdaAuthorizerEvent<any>) {
   try {
@@ -36,7 +37,7 @@ export async function handler(event: APIGatewayProxyWithLambdaAuthorizerEvent<an
     const requestPayload: EnterprisePushEvent = parseRequestBody(body, headers);
     const url = decodeURIComponent(endpointId);
 
-    if (!requestPayloadIsValid(requestPayload) || !destinationHostIsAllowed(url)) {
+    if (!isValidUrl(url) || !requestPayloadIsValid(requestPayload) || !destinationHostIsAllowed(url)) {
       return { statusCode: 403, body: 'Access denied' };
     }
 
