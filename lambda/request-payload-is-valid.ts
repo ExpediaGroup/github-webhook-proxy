@@ -11,24 +11,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { EnterprisePushEvent } from './types';
+import { EnterpriseProxyEvent } from './types';
 
-export function requestPayloadIsValid(requestPayload: EnterprisePushEvent) {
+export function requestPayloadIsValid(requestPayload: EnterpriseProxyEvent) {
   const {
-    repository: {
-      owner: { login: githubOrg }
-    },
+    sender: { login: senderLogin },
     enterprise
   } = requestPayload;
-  return requestCameFromValidEnterprise(enterprise) || githubOrgEndsWithUserSuffix(githubOrg);
+  return requestCameFromValidEnterprise(enterprise) || senderLoginEndsWithUserSuffix(senderLogin);
 }
 
-function requestCameFromValidEnterprise(enterprise: EnterprisePushEvent['enterprise'] | undefined) {
+function requestCameFromValidEnterprise(enterprise: EnterpriseProxyEvent['enterprise'] | undefined) {
   return process.env.ENTERPRISE_SLUG && enterprise?.slug === process.env.ENTERPRISE_SLUG;
 }
 
-function githubOrgEndsWithUserSuffix(githubOrg: string) {
+function senderLoginEndsWithUserSuffix(senderLogin: string) {
   return (
-    process.env.ENTERPRISE_MANAGED_USER_SUFFIX && githubOrg.endsWith(`_${process.env.ENTERPRISE_MANAGED_USER_SUFFIX}`)
+    process.env.ENTERPRISE_MANAGED_USER_SUFFIX && senderLogin.endsWith(`_${process.env.ENTERPRISE_MANAGED_USER_SUFFIX}`)
   );
 }
