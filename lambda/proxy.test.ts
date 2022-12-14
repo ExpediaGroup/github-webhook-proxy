@@ -13,12 +13,13 @@ limitations under the License.
 
 import { handler } from './proxy';
 import axios, { AxiosResponse } from 'axios';
-import * as validPayload from '../fixtures/valid-payload.json';
-import * as validPayloadUserRepo from '../fixtures/valid-payload-user-repo.json';
 import { readFileSync } from 'fs';
 import { Agent } from 'https';
 import { readFileFromLayer } from './file-readers';
 import { APIGatewayProxyWithLambdaAuthorizerEvent } from 'aws-lambda';
+import { VALID_PING_EVENT } from '../fixtures/valid-ping-payload';
+import { VALID_PUSH_PAYLOAD } from '../fixtures/valid-push-payload';
+import { VALID_PUSH_PAYLOAD_USER_REPO } from '../fixtures/valid-push-payload-user-repo';
 const urlencodedPayload = readFileSync('fixtures/invalid-payload-urlencoded.txt').toString();
 
 jest.mock('axios');
@@ -40,7 +41,7 @@ const expectedResponseObject = {
   body: '{"some":"data"}',
   headers: { response: 'headers' }
 };
-const stringifiedPayload = JSON.stringify(validPayload);
+const stringifiedPayload = JSON.stringify(VALID_PUSH_PAYLOAD);
 const baseEvent: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
   body: stringifiedPayload,
   headers: {
@@ -104,7 +105,7 @@ describe('proxy', () => {
     const endpointId = encodeURIComponent(destinationUrl);
     const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
       ...baseEvent,
-      body: JSON.stringify(validPayloadUserRepo),
+      body: JSON.stringify(VALID_PUSH_PAYLOAD_USER_REPO),
       pathParameters: {
         endpointId
       }
@@ -118,7 +119,7 @@ describe('proxy', () => {
     const destinationUrl = 'https://approved.host/github-webhook/';
     const endpointId = encodeURIComponent(destinationUrl);
     const payload = {
-      ...validPayload,
+      ...VALID_PUSH_PAYLOAD,
       enterprise: undefined
     };
     const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
@@ -200,5 +201,21 @@ describe('proxy', () => {
     const result = await handler(event);
     expect(result).toEqual({ statusCode: 404, body: 'Not found' });
     expect(axios.post).not.toHaveBeenCalled();
+  });
+
+  it('should forward a ping event from a managed user suffix when supplied', async () => {
+    process.env.ENTERPRISE_MANAGED_USER_SUFFIX = 'suffix';
+    const destinationUrl = 'https://approved.host/github-webhook/';
+    const endpointId = encodeURIComponent(destinationUrl);
+    const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
+      ...baseEvent,
+      body: JSON.stringify(VALID_PING_EVENT),
+      pathParameters: {
+        endpointId
+      }
+    };
+    const result = await handler(event);
+    expect(result).toEqual(expectedResponseObject);
+    expect(axios.post).toHaveBeenCalled();
   });
 });
