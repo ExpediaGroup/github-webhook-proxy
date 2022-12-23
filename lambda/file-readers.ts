@@ -13,7 +13,7 @@ limitations under the License.
 
 import { existsSync, readFileSync } from 'fs';
 
-export function readFileFromLayer(fileName: string): string {
+export function readFileFromLayer(fileName: string) {
   const filePath = `/opt/layer/${fileName}`;
   if (!existsSync(filePath)) {
     return undefined;

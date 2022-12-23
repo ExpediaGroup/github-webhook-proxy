@@ -24,11 +24,8 @@ export async function handler(event: APIGatewayProxyWithLambdaAuthorizerEvent<an
   try {
     console.log('Incoming event:', JSON.stringify(event));
 
-    const {
-      body,
-      headers,
-      pathParameters: { endpointId }
-    } = event;
+    const { body, headers, pathParameters } = event;
+    const endpointId = pathParameters?.endpointId;
 
     if (!endpointId || !body) {
       return { statusCode: 404, body: 'Not found' };
