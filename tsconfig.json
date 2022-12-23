@@ -11,7 +11,7 @@
     "resolveJsonModule": true,
     "strict": true
   },
-    "include": [
+  "include": [
     "lambda"
   ],
   "exclude": [
