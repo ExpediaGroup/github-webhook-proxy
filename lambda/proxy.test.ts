@@ -62,7 +62,7 @@ const baseEvent: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
   requestContext: {} as any,
   resource: ''
 };
-const fileMap = {
+const fileMap: Record<string, string> = {
   'allowed-destination-hosts.json': JSON.stringify(['approved.host', 'another.approved.host'])
 };
 (readFileFromLayer as jest.Mock).mockImplementation((fileName: string) => fileMap[fileName]);
@@ -168,7 +168,7 @@ describe('proxy', () => {
   });
 
   it('should forward a request from an enterprise and github org with supplied certs', async () => {
-    const newFileMap = {
+    const newFileMap: Record<string, string> = {
       ...fileMap,
       'ca.pem': 'some ca',
       'cert.pem': 'some cert'

@@ -13,20 +13,17 @@ limitations under the License.
 
 import { EnterpriseProxyEvent } from './types';
 
-export function requestPayloadIsValid(requestPayload: EnterpriseProxyEvent) {
-  const {
-    sender: { login: senderLogin },
-    enterprise
-  } = requestPayload;
-  return requestCameFromValidEnterprise(enterprise) || senderLoginEndsWithUserSuffix(senderLogin);
+export function requestPayloadIsValid({ sender, enterprise }: EnterpriseProxyEvent) {
+  return requestCameFromValidEnterprise(enterprise) || senderLoginEndsWithUserSuffix(sender?.login);
 }
 
-function requestCameFromValidEnterprise(enterprise: EnterpriseProxyEvent['enterprise'] | undefined) {
+function requestCameFromValidEnterprise(enterprise?: EnterpriseProxyEvent['enterprise']) {
   return process.env.ENTERPRISE_SLUG && enterprise?.slug === process.env.ENTERPRISE_SLUG;
 }
 
-function senderLoginEndsWithUserSuffix(senderLogin: string) {
+function senderLoginEndsWithUserSuffix(senderLogin?: string) {
   return (
-    process.env.ENTERPRISE_MANAGED_USER_SUFFIX && senderLogin.endsWith(`_${process.env.ENTERPRISE_MANAGED_USER_SUFFIX}`)
+    process.env.ENTERPRISE_MANAGED_USER_SUFFIX &&
+    senderLogin?.endsWith(`_${process.env.ENTERPRISE_MANAGED_USER_SUFFIX}`)
   );
 }

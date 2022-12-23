@@ -8,9 +8,10 @@
     "esModuleInterop": true,
     "jsx": "react",
     "moduleResolution": "node",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "strict": true
   },
-  "include": [
+    "include": [
     "lambda"
   ],
   "exclude": [
