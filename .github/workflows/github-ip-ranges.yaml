@@ -3,7 +3,7 @@ name: Check Github IP Ranges
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *" # once a day
+    - cron: "0 0 * * 0" # once a week
 
 jobs:
   check:
@@ -17,7 +17,11 @@ jobs:
           token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
 
       - name: Generate GitHub IP Ranges
-        run: echo "locals {github_hooks_ip_ranges = $(curl https://api.github.com/meta | jq -c .hooks)}" > github-hooks-ip-ranges.tf
+        run: |
+          HOOKS=$(curl https://api.github.com/meta | jq -c .hooks)
+          if [[ "$HOOKS" != 'null' ]]; then
+            echo "locals {github_hooks_ip_ranges = $HOOKS}" > github-hooks-ip-ranges.tf
+          fi
 
       - name: Setup
         uses: hashicorp/setup-terraform@v2
