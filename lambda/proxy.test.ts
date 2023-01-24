@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import { handler } from './proxy';
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosRequestHeaders, AxiosResponse } from 'axios';
 import { readFileSync } from 'fs';
 import { Agent } from 'https';
 import { readFileFromLayer } from './file-readers';
@@ -33,7 +33,9 @@ const axiosResponse: AxiosResponse = {
     response: 'headers'
   },
   statusText: 'status',
-  config: {}
+  config: {
+    headers: {} as AxiosRequestHeaders
+  }
 };
 (axios.post as jest.Mock).mockResolvedValue(axiosResponse);
 const expectedResponseObject = {
