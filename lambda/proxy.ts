@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { APIGatewayProxyWithLambdaAuthorizerEvent } from 'aws-lambda';
 import { requestPayloadIsValid } from './request-payload-is-valid';
 import { destinationHostIsAllowed } from './destination-host-is-allowed';
@@ -47,10 +47,18 @@ export async function handler(event: APIGatewayProxyWithLambdaAuthorizerEvent<an
       data,
       headers: responseHeaders
     } = await axios.post(url, body, { headers, httpsAgent: getHttpsAgent() });
+    console.log('Request was forwarded successfully!');
     console.log('result', JSON.stringify({ statusCode, body: data, headers: responseHeaders }));
     return { statusCode, body: JSON.stringify(data), headers: responseHeaders };
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    if (typeof error === 'object' && error && 'response' in error) {
+      console.log('Request was forwarded but got an error response.');
+      const { status: statusCode, data, headers: responseHeaders } = error.response as AxiosResponse;
+      console.log('result', JSON.stringify({ statusCode, body: data, headers: responseHeaders }));
+      return { statusCode, body: JSON.stringify(data), headers: responseHeaders };
+    }
+
+    console.error('An unknown error occurred.', error);
     return { statusCode: 500, body: 'Internal server error' };
   }
 }

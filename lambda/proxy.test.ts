@@ -220,4 +220,39 @@ describe('proxy', () => {
     expect(result).toEqual(expectedResponseObject);
     expect(axios.post).toHaveBeenCalled();
   });
+
+  it('should return error response from axios', async () => {
+    const axiosErrorResponse: AxiosResponse = {
+      status: 400,
+      data: {
+        some: 'error'
+      },
+      headers: {
+        response: 'headers'
+      },
+      statusText: 'bad request',
+      config: {
+        headers: {} as AxiosRequestHeaders
+      }
+    };
+    (axios.post as jest.Mock).mockRejectedValue({ response: axiosErrorResponse });
+
+    process.env.ENTERPRISE_MANAGED_USER_SUFFIX = 'suffix';
+    const destinationUrl = 'https://approved.host/github-webhook/';
+    const endpointId = encodeURIComponent(destinationUrl);
+    const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
+      ...baseEvent,
+      body: JSON.stringify(VALID_PUSH_PAYLOAD_USER_REPO),
+      pathParameters: {
+        endpointId
+      }
+    };
+    const result = await handler(event);
+    expect(result).toEqual({
+      statusCode: 400,
+      body: '{"some":"error"}',
+      headers: { response: 'headers' }
+    });
+    expect(axios.post).toHaveBeenCalled();
+  });
 });
