@@ -14,7 +14,7 @@
     "typescript": "5.0.4"
   },
   "devDependencies": {
-    "@octokit/webhooks": "10.7.0",
+    "@octokit/webhooks": "11.0.0",
     "@types/aws-lambda": "8.10.107",
     "@types/jest": "28.1.7",
     "jest": "28.1.3",
