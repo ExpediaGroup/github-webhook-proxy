@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@types/node": "18.11.9",
-    "axios": "1.3.5",
+    "axios": "1.3.6",
     "query-string": "7.1.3",
     "typescript": "5.0.4"
   },
