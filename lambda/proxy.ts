@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { APIGatewayProxyWithLambdaAuthorizerEvent } from 'aws-lambda';
 import { requestPayloadIsValid } from './request-payload-is-valid';
 import { destinationHostIsAllowed } from './destination-host-is-allowed';
@@ -19,10 +19,11 @@ import { getHttpsAgent } from './get-https-agent';
 import { parseRequestBody } from './parse-request-body';
 import { EnterpriseProxyEvent } from './types';
 import { urlIsValid } from './url-is-valid';
+import { axiosErrorSchema } from './schema';
 
 export async function handler(event: APIGatewayProxyWithLambdaAuthorizerEvent<any>) {
   try {
-    console.log('Incoming event:', JSON.stringify(event));
+    console.info('Incoming event:', JSON.stringify(event));
 
     const { body, headers, pathParameters } = event;
     const endpointId = pathParameters?.endpointId;
@@ -41,20 +42,21 @@ export async function handler(event: APIGatewayProxyWithLambdaAuthorizerEvent<an
     // Forward all headers except `Host`
     delete headers['Host'];
 
-    console.log('Forwarding webhook for url:', url);
+    console.info('Forwarding webhook for url:', url);
     const {
       status: statusCode,
       data,
       headers: responseHeaders
     } = await axios.post(url, body, { headers, httpsAgent: getHttpsAgent() });
-    console.log('Request was forwarded successfully!');
-    console.log('result', JSON.stringify({ statusCode, body: data, headers: responseHeaders }));
+    console.info('Request was forwarded successfully!');
+    console.info('result', JSON.stringify({ statusCode, body: data, headers: responseHeaders }));
     return { statusCode, body: JSON.stringify(data), headers: responseHeaders };
   } catch (error) {
-    if (typeof error === 'object' && error && 'response' in error) {
-      console.log('Request was forwarded but got an error response.');
-      const { status: statusCode, data, headers: responseHeaders } = error.response as AxiosResponse;
-      console.log('result', JSON.stringify({ statusCode, body: data, headers: responseHeaders }));
+    const safeError = axiosErrorSchema.safeParse(error);
+    if (safeError.success) {
+      console.warn('Request was forwarded but got an error response.');
+      const { status: statusCode, data, headers: responseHeaders } = safeError.data.response as AxiosResponse;
+      console.warn('result', JSON.stringify({ statusCode, body: data, headers: responseHeaders }));
       return { statusCode, body: JSON.stringify(data), headers: responseHeaders };
     }
 
