@@ -13,16 +13,16 @@ limitations under the License.
 
 import { IncomingHttpHeaders } from 'http';
 import { parse } from 'query-string';
+import { bodySchema, CONTENT_TYPES, headersSchema } from './schema';
 
 export function parseRequestBody(body: string, headers: IncomingHttpHeaders) {
-  const contentType = headers['content-type'];
+  const headersResult = headersSchema.parse(headers);
+  const contentType = headersResult['content-type'];
   switch (contentType) {
-    case 'application/json':
+    case CONTENT_TYPES.JSON:
       return JSON.parse(body);
-    case 'application/x-www-form-urlencoded':
-      const { payload } = parse(body) as { payload: string };
+    case CONTENT_TYPES.URL_ENCODED:
+      const { payload } = bodySchema.parse(parse(body));
       return JSON.parse(decodeURIComponent(payload));
-    default:
-      throw new Error(`Unsupported content type: ${contentType}`);
   }
 }
