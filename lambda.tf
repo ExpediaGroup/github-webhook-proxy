@@ -8,7 +8,7 @@ resource "aws_lambda_function" "proxy" {
   function_name     = "${var.resource_prefix}-proxy"
   memory_size       = 128
   role              = aws_iam_role.proxy.arn
-  runtime           = "nodejs14.x"
+  runtime           = "nodejs18.x"
   s3_bucket         = data.aws_s3_object.proxy_lambda.bucket
   s3_key            = data.aws_s3_object.proxy_lambda.key
   s3_object_version = data.aws_s3_object.proxy_lambda.version_id
