@@ -19,7 +19,7 @@
     "@swc/jest": "0.2.27",
     "@types/aws-lambda": "8.10.107",
     "@types/jest": "29.5.3",
-    "jest": "29.6.1",
+    "jest": "29.6.2",
     "prettier": "3.0.0"
   },
   "jest": {
