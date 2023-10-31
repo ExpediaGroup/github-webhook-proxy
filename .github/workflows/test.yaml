@@ -54,7 +54,7 @@ jobs:
         run: echo TF_VERSION=`cat .terraform-version` >> $GITHUB_ENV
 
       - name: Setup
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init -backend=false
