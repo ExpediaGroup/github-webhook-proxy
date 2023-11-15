@@ -11,8 +11,14 @@ export const CONTENT_TYPES = {
   URL_ENCODED: 'application/x-www-form-urlencoded'
 } as const;
 
+// headerSchema that supports either 'Content-Type' or 'content-type'
 export const headersSchema = z.object({
-  'content-type': z.nativeEnum(CONTENT_TYPES)
+  'content-type': z.string().optional(),
+  'Content-Type': z.string().optional()
+}).refine((headers) => {
+  return headers['content-type'] || headers['Content-Type'];
+}, {
+  message: 'Missing Content-Type header'
 });
 
 export const axiosErrorSchema = z.object({
