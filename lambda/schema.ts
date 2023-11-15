@@ -11,7 +11,6 @@ export const CONTENT_TYPES = {
   URL_ENCODED: 'application/x-www-form-urlencoded'
 } as const;
 
-// headerSchema that supports either 'Content-Type' or 'content-type'
 export const headersSchema = z
   .object({
     'content-type': z.string().optional(),
