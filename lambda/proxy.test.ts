@@ -120,10 +120,14 @@ describe('proxy', () => {
   it('should forward a request if content-type header is Content-Type or content-type', async () => {
     const destinationUrl = 'https://approved.host/github-webhook/';
     const endpointId = encodeURIComponent(destinationUrl);
+
+    // create copy of baseEvent.headers without 'content-type' key
+    const { 'content-type': _, ...headers } = baseEvent.headers;
+
     const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
       ...baseEvent,
       headers: {
-        ...baseEvent.headers,
+        ...headers,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(VALID_PUSH_PAYLOAD),
