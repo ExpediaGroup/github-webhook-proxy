@@ -117,7 +117,7 @@ describe('proxy', () => {
     expect(axios.post).toHaveBeenCalled();
   });
 
-  it('should forward a request if content-type header is Content-Type or content-type', async () => {
+  it('should forward a request when header is Content-Type', async () => {
     const destinationUrl = 'https://approved.host/github-webhook/';
     const endpointId = encodeURIComponent(destinationUrl);
     const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
