@@ -117,6 +117,26 @@ describe('proxy', () => {
     expect(axios.post).toHaveBeenCalled();
   });
 
+  it('should forward a request when header is Content-Type', async () => {
+    const destinationUrl = 'https://approved.host/github-webhook/';
+    const endpointId = encodeURIComponent(destinationUrl);
+    const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
+      ...baseEvent,
+      headers: {
+        ...baseEvent.headers,
+        'content-type': undefined,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(VALID_PUSH_PAYLOAD),
+      pathParameters: {
+        endpointId
+      }
+    };
+    const result = await handler(event);
+    expect(result).toEqual(expectedResponseObject);
+    expect(axios.post).toHaveBeenCalled();
+  });
+
   it('should not forward a request that does not come from an enterprise or managed user suffix', async () => {
     const destinationUrl = 'https://approved.host/github-webhook/';
     const endpointId = encodeURIComponent(destinationUrl);
