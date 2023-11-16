@@ -12,14 +12,16 @@ export const CONTENT_TYPES = {
   URL_ENCODED: 'application/x-www-form-urlencoded'
 } as const;
 
-export const headersSchema = z
-  .preprocess(obj => {
+export const headersSchema = z.preprocess(
+  obj => {
     if (obj && typeof obj == 'object') {
-      return mapKeys(obj, (_, key) => key.toLowerCase())
+      return mapKeys(obj, (_, key) => key.toLowerCase());
     }
-  }, z.object({
+  },
+  z.object({
     'content-type': z.nativeEnum(CONTENT_TYPES)
-  }))
+  })
+);
 
 export const axiosErrorSchema = z.object({
   response: z.object({
