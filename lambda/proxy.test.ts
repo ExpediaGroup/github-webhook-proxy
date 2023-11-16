@@ -123,9 +123,9 @@ describe('proxy', () => {
     const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
       ...baseEvent,
       headers: {
-        ...baseEvent.headers,
-        'content-type': undefined,
-        'Content-Type': 'application/json'
+        Accept: '*/*',
+        'Content-Type': 'application/json',
+        Host: 'some-api.us-west-2.amazonaws.com'
       },
       body: JSON.stringify(VALID_PUSH_PAYLOAD),
       pathParameters: {
