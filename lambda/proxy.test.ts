@@ -124,7 +124,6 @@ describe('proxy', () => {
       ...baseEvent,
       headers: {
         ...baseEvent.headers,
-        'content-type': undefined,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(VALID_PUSH_PAYLOAD),
