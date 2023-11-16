@@ -12,9 +12,11 @@ export const CONTENT_TYPES = {
   URL_ENCODED: 'application/x-www-form-urlencoded'
 } as const;
 
-export const headersSchema = z.object({
-  'content-type': z.nativeEnum(CONTENT_TYPES)
-}).transform(obj => mapKeys(obj, (_, key) => key.toLowerCase()));
+export const headersSchema = z
+  .object({
+    'content-type': z.nativeEnum(CONTENT_TYPES)
+  })
+  .transform(obj => mapKeys(obj, (_, key) => key.toLowerCase()));
 
 export const axiosErrorSchema = z.object({
   response: z.object({
