@@ -13,10 +13,13 @@ export const CONTENT_TYPES = {
 } as const;
 
 export const headersSchema = z
-  .object({
+  .preprocess(obj => {
+    if (obj && typeof obj == 'object') {
+      return mapKeys(obj, (_, key) => key.toLowerCase())
+    }
+  }, z.object({
     'content-type': z.nativeEnum(CONTENT_TYPES)
-  })
-  .transform(obj => mapKeys(obj, (_, key) => key.toLowerCase()));
+  }))
 
 export const axiosErrorSchema = z.object({
   response: z.object({
