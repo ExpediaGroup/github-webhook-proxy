@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import mapKeys from 'lodash.mapkeys';
 
 export const urlSchema = z.string().url();
 
@@ -11,19 +12,16 @@ export const CONTENT_TYPES = {
   URL_ENCODED: 'application/x-www-form-urlencoded'
 } as const;
 
-export const headersSchema = z
-  .object({
-    'content-type': z.string().optional(),
-    'Content-Type': z.string().optional()
-  })
-  .refine(
-    headers => {
-      return headers['content-type'] || headers['Content-Type'];
-    },
-    {
-      message: 'Missing Content-Type header'
+export const headersSchema = z.preprocess(
+  obj => {
+    if (obj && typeof obj == 'object') {
+      return mapKeys(obj, (_, key) => key.toLowerCase());
     }
-  );
+  },
+  z.object({
+    'content-type': z.nativeEnum(CONTENT_TYPES)
+  })
+);
 
 export const axiosErrorSchema = z.object({
   response: z.object({

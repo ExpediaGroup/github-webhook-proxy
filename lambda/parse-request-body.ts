@@ -17,7 +17,7 @@ import { bodySchema, CONTENT_TYPES, headersSchema } from './schema';
 
 export function parseRequestBody(body: string, headers: IncomingHttpHeaders) {
   const headersResult = headersSchema.parse(headers);
-  const contentType = headersResult['content-type'] || headersResult['Content-Type'];
+  const contentType = headersResult['content-type'];
   switch (contentType) {
     case CONTENT_TYPES.JSON:
       return JSON.parse(body);

@@ -61,6 +61,6 @@ export async function handler(event: APIGatewayProxyWithLambdaAuthorizerEvent<an
     }
 
     console.error('An unknown error occurred.', error);
-    return { statusCode: 500, body: 'Internal server error' };
+    return { statusCode: 500, body: `Internal server error: ${error}` };
   }
 }
