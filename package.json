@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@types/node": "20.1.1",
-    "axios": "1.6.3",
+    "axios": "1.6.5",
     "lodash.mapkeys": "4.6.0",
     "query-string": "7.1.3",
     "typescript": "5.3.3",
