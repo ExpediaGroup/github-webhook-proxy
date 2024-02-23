@@ -65,7 +65,7 @@ const baseEvent: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
   resource: ''
 };
 const fileMap: Record<string, string> = {
-  'allowed-destination-hosts.json': JSON.stringify(['approved.host', 'another.approved.host'])
+  'allowed-destination-hosts.json': JSON.stringify(['approved.host', 'another.approved.host', 'a.wildcard.*.host'])
 };
 (readFileFromLayer as jest.Mock).mockImplementation((fileName: string) => fileMap[fileName]);
 
@@ -168,6 +168,19 @@ describe('proxy', () => {
     const result = await handler(event);
     expect(result).toEqual({ statusCode: 403, body: 'Access denied' });
     expect(axios.post).not.toHaveBeenCalled();
+  });
+
+  it('should forward a request that has an approved host which matches a wildcard', async () => {
+    const destinationUrl = 'https://a.wildcard.test.host/github-webhook/';
+    const endpointId = encodeURIComponent(destinationUrl);
+    const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
+      ...baseEvent,
+      pathParameters: {
+        endpointId
+      }
+    };
+    const result = await handler(event);
+    expect(result).toEqual(expectedResponseObject);
   });
 
   it('should forward a request from an enterprise and github org without supplied certs', async () => {
