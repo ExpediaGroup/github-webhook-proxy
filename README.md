@@ -17,7 +17,7 @@ aws s3 cp "${file}" "${s3_destination}/${file}"
 ```
 
 Optionally, you may create a Lambda layer which optionally contains the following files:
-* `allowed-destination-hosts.json`: An array of destination hosts that the proxy can forward to. If omitted, all destinations will be allowed.
+* `allowed-destination-hosts.json`: An array of destination hosts that the proxy can forward to. If omitted, all destinations will be allowed. Wildcard matching is supported via [micromatch](https://github.com/micromatch/micromatch)
 * `ca.pem`: A root CA certificate for forwarding to internal destinations with self-signed certs
 * `cert.pem`: A chain certificate for forwarding to internal destinations with self-signed certs
 
