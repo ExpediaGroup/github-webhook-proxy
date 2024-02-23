@@ -1,5 +1,9 @@
 import { urlSchema } from './schema';
 
 export function urlIsValid(url: string) {
-  return urlSchema.safeParse(url).success;
+  const urlIsValid = urlSchema.safeParse(url).success;
+  if (!urlIsValid) {
+    console.error('Invalid URL:', url);
+  }
+  return urlIsValid;
 }

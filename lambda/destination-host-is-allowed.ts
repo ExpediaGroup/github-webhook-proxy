@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import { readFileFromLayer } from './file-readers';
+import { isMatch } from 'micromatch';
 
 export function destinationHostIsAllowed(url: string) {
   const allowedDestinationHostsContents = readFileFromLayer('allowed-destination-hosts.json');
@@ -19,5 +20,10 @@ export function destinationHostIsAllowed(url: string) {
     return true;
   }
   const allowedDestinationHosts: string[] = JSON.parse(allowedDestinationHostsContents);
-  return allowedDestinationHosts.includes(new URL(url).host);
+  const host = new URL(url).host;
+  const destinationHostIsAllowed = allowedDestinationHosts.includes(host) || isMatch(host, allowedDestinationHosts);
+  if (!destinationHostIsAllowed) {
+    console.error(`Destination host ${host} does not match allowlist ${allowedDestinationHosts}`);
+  }
+  return destinationHostIsAllowed;
 }

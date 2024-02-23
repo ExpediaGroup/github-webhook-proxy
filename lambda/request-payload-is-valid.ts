@@ -18,12 +18,24 @@ export function requestPayloadIsValid({ sender, enterprise }: EnterpriseProxyEve
 }
 
 function requestCameFromValidEnterprise(enterprise?: EnterpriseProxyEvent['enterprise']) {
-  return process.env.ENTERPRISE_SLUG && enterprise?.slug === process.env.ENTERPRISE_SLUG;
+  const requestCameFromValidEnterprise =
+    process.env.ENTERPRISE_SLUG && enterprise?.slug === process.env.ENTERPRISE_SLUG;
+  if (!requestCameFromValidEnterprise) {
+    console.error(
+      `ENTERPRISE_SLUG environment variable ${process.env.ENTERPRISE_SLUG} does not equal enterprise slug ${enterprise?.slug}`
+    );
+  }
+  return requestCameFromValidEnterprise;
 }
 
 function senderLoginEndsWithUserSuffix(senderLogin?: string) {
-  return (
+  const senderLoginEndsWithUserSuffix =
     process.env.ENTERPRISE_MANAGED_USER_SUFFIX &&
-    senderLogin?.endsWith(`_${process.env.ENTERPRISE_MANAGED_USER_SUFFIX}`)
-  );
+    senderLogin?.endsWith(`_${process.env.ENTERPRISE_MANAGED_USER_SUFFIX}`);
+  if (!senderLoginEndsWithUserSuffix) {
+    console.error(
+      `Sender login ${senderLogin} does not end with ENTERPRISE_MANAGED_USER_SUFFIX environment variable ${process.env.ENTERPRISE_MANAGED_USER_SUFFIX}`
+    );
+  }
+  return senderLoginEndsWithUserSuffix;
 }
