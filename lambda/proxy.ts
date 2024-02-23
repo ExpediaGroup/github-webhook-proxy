@@ -29,6 +29,7 @@ export async function handler(event: APIGatewayProxyWithLambdaAuthorizerEvent<an
     const endpointId = pathParameters?.endpointId;
 
     if (!endpointId || !body) {
+      console.error(`EndpointId or body is missing. endpointId: ${endpointId}, body: ${body}`);
       return { statusCode: 404, body: 'Not found' };
     }
 

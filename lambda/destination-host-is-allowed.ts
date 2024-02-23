@@ -19,5 +19,9 @@ export function destinationHostIsAllowed(url: string) {
     return true;
   }
   const allowedDestinationHosts: string[] = JSON.parse(allowedDestinationHostsContents);
-  return allowedDestinationHosts.includes(new URL(url).host);
+  const destinationHostIsAllowed = allowedDestinationHosts.includes(new URL(url).host);
+  if (!destinationHostIsAllowed) {
+    console.error(`Destination host ${new URL(url).host} does not match allowlist ${allowedDestinationHosts}`);
+  }
+  return destinationHostIsAllowed;
 }
