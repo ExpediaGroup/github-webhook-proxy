@@ -1,6 +1,6 @@
-import { EnterpriseProxyEvent } from '../lambda/types';
+import { PushEvent } from '../lambda/types';
 
-export const VALID_PUSH_PAYLOAD_USER_REPO: EnterpriseProxyEvent = {
+export const VALID_PUSH_PAYLOAD_USER_REPO: PushEvent = {
   ref: 'refs/heads/main',
   before: '448223ee31c525296e09832c0da95559015f500c',
   after: '7119b388e221a96ced5e1dfa0528d51847828308',
@@ -106,7 +106,8 @@ export const VALID_PUSH_PAYLOAD_USER_REPO: EnterpriseProxyEvent = {
     watchers: 0,
     default_branch: 'main',
     stargazers: 0,
-    master_branch: 'main'
+    master_branch: 'main',
+    has_discussions: false
   },
   pusher: {
     name: 'username_suffix',
