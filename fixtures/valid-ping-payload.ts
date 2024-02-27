@@ -1,4 +1,4 @@
-import { PingEvent } from '@octokit/webhooks-types';
+import { PingEvent } from '../lambda/types';
 
 export const VALID_PING_EVENT: PingEvent = {
   zen: 'Design for failure.',
