@@ -8,7 +8,7 @@
     "test": "jest --silent"
   },
   "dependencies": {
-    "@types/node": "20.11.24",
+    "@types/node": "20.11.25",
     "axios": "1.6.7",
     "lodash.mapkeys": "4.6.0",
     "query-string": "7.1.3",
