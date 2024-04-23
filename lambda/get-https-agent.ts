@@ -11,18 +11,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import https from 'https';
-import { getPublicCerts, readFileFromLayer } from './file-readers';
+import https from "https";
+import { getPublicCerts, readFileFromLayer } from "./file-readers";
 
 export function getHttpsAgent() {
-  const suppliedCertificateAuthority = readFileFromLayer('ca.pem');
-  const suppliedCertificate = readFileFromLayer('cert.pem');
+  const suppliedCertificateAuthority = readFileFromLayer("ca.pem");
+  const suppliedCertificate = readFileFromLayer("cert.pem");
   if (!suppliedCertificateAuthority || !suppliedCertificate) {
     return undefined;
   }
 
   return new https.Agent({
-    ca: [getPublicCerts(), suppliedCertificateAuthority].join('\n'),
-    cert: suppliedCertificate
+    ca: [getPublicCerts(), suppliedCertificateAuthority].join("\n"),
+    cert: suppliedCertificate,
   });
 }

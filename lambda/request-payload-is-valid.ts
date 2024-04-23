@@ -11,18 +11,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { EnterpriseProxyEvent } from './types';
+import { EnterpriseProxyEvent } from "./types";
 
-export function requestPayloadIsValid({ sender, enterprise }: EnterpriseProxyEvent) {
-  return requestCameFromValidEnterprise(enterprise) || senderLoginEndsWithUserSuffix(sender?.login);
+export function requestPayloadIsValid(payload?: EnterpriseProxyEvent) {
+  const { sender, enterprise } = payload ?? {};
+  return (
+    requestCameFromValidEnterprise(enterprise) ||
+    senderLoginEndsWithUserSuffix(sender?.login)
+  );
 }
 
-function requestCameFromValidEnterprise(enterprise?: EnterpriseProxyEvent['enterprise']) {
+function requestCameFromValidEnterprise(
+  enterprise?: EnterpriseProxyEvent["enterprise"],
+) {
   const requestCameFromValidEnterprise =
-    process.env.ENTERPRISE_SLUG && enterprise?.slug === process.env.ENTERPRISE_SLUG;
+    process.env.ENTERPRISE_SLUG &&
+    enterprise?.slug === process.env.ENTERPRISE_SLUG;
   if (!requestCameFromValidEnterprise) {
     console.error(
-      `ENTERPRISE_SLUG environment variable ${process.env.ENTERPRISE_SLUG} does not equal enterprise slug ${enterprise?.slug}`
+      `ENTERPRISE_SLUG environment variable ${process.env.ENTERPRISE_SLUG} does not equal enterprise slug ${enterprise?.slug}`,
     );
   }
   return requestCameFromValidEnterprise;
@@ -34,7 +41,7 @@ function senderLoginEndsWithUserSuffix(senderLogin?: string) {
     senderLogin?.endsWith(`_${process.env.ENTERPRISE_MANAGED_USER_SUFFIX}`);
   if (!senderLoginEndsWithUserSuffix) {
     console.error(
-      `Sender login ${senderLogin} does not end with ENTERPRISE_MANAGED_USER_SUFFIX environment variable ${process.env.ENTERPRISE_MANAGED_USER_SUFFIX}`
+      `Sender login ${senderLogin} does not end with ENTERPRISE_MANAGED_USER_SUFFIX environment variable ${process.env.ENTERPRISE_MANAGED_USER_SUFFIX}`,
     );
   }
   return senderLoginEndsWithUserSuffix;

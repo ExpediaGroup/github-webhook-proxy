@@ -13,16 +13,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
 
       - name: Install
-        run: npm ci
+        run: bun i
 
       - name: Build
-        run: npm run build
+        run: bun run build
 
       - name: Inject Mozilla Cert Bundles
         run: curl https://curl.se/ca/cacert.pem -o build/public-certs.pem

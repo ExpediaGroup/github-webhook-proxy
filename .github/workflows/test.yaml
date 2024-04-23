@@ -12,22 +12,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
 
       - name: Install
-        run: npm ci
+        run: bun i
 
       - name: Format
-        run: npm run format-check
+        run: bun run format-check
 
-      - name: Test
-        run: npm run test
+      - name: Type Check
+        run: bun tsc
 
       - name: Build
-        run: npm run build
+        run: bun run build
+
+      - name: Test
+        run: bun run test
 
   docs:
     runs-on: ubuntu-latest

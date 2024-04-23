@@ -1,22 +1,17 @@
 {
   "compilerOptions": {
-    "outDir": "build",
-    "lib": ["esnext", "dom", "dom.iterable"],
-    "module": "commonjs",
-    "target": "es5",
-    "sourceMap": true,
-    "esModuleInterop": true,
-    "jsx": "react",
+    "allowSyntheticDefaultImports": true,
+    "moduleDetection": "force",
     "moduleResolution": "node",
+    "module": "esnext",
+    "target": "esnext",
+    "types": ["jest", "node"],
+    "noEmit": true,
+    "noImplicitAny": true,
+    "noUncheckedIndexedAccess": true,
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "strict": true
   },
-  "include": [
-    "lambda"
-  ],
-  "exclude": [
-    "node_modules",
-    "github-ip-ranges",
-    "**/*.test.ts"
-  ]
+  "exclude": ["build"]
 }

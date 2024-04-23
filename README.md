@@ -17,11 +17,13 @@ aws s3 cp "${file}" "${s3_destination}/${file}"
 ```
 
 Optionally, you may create a Lambda layer which optionally contains the following files:
-* `allowed-destination-hosts.json`: An array of destination hosts that the proxy can forward to. If omitted, all destinations will be allowed. Wildcard matching is supported via [micromatch](https://github.com/micromatch/micromatch)
-* `ca.pem`: A root CA certificate for forwarding to internal destinations with self-signed certs
-* `cert.pem`: A chain certificate for forwarding to internal destinations with self-signed certs
+
+- `allowed-destination-hosts.json`: An array of destination hosts that the proxy can forward to. If omitted, all destinations will be allowed. Wildcard matching is supported via [micromatch](https://github.com/micromatch/micromatch)
+- `ca.pem`: A root CA certificate for forwarding to internal destinations with self-signed certs
+- `cert.pem`: A chain certificate for forwarding to internal destinations with self-signed certs
 
 These files must be in a zipped `layer` directory, and this can be uploaded using the following script:
+
 ```shell
 # Zip and Upload Lambda Layer to s3_destination
 file="proxy-lambda-layer.zip"
@@ -32,6 +34,7 @@ aws s3 cp "${file}" "${s3_destination}/${file}"
 If the layer is used, its ARN must be passed to the `lambda_layer_arn` Terraform variable.
 
 ### Example Terraform Module Usage
+
 ```hcl
 module "github-webhook-proxy" {
   source     = "git::https://github.com/ExpediaGroup/github-webhook-proxy.git?ref=v2"
@@ -69,15 +72,15 @@ locals {
 ### Adding a New Webhook
 
 1. **Create the webhook proxy URL**
-    1. Obtain your desired destination URL, i.e. the internal endpoint where you want to send webhooks.
-    2. Encode your destination URL! An easy way to do this is to use `jq` in your terminal
-       (install it [here](https://stedolan.github.io/jq/download/) if you don't have it already): `jq -rn --arg x 'YOUR_DESTINATION_URL_HERE' '$x|@uri'`
-    3. Paste the encoded URL at the end of the webhook proxy base URL (`https://YOUR_API_URL/webhook`).
+   1. Obtain your desired destination URL, i.e. the internal endpoint where you want to send webhooks.
+   2. Encode your destination URL! An easy way to do this is to use `jq` in your terminal
+      (install it [here](https://stedolan.github.io/jq/download/) if you don't have it already): `jq -rn --arg x 'YOUR_DESTINATION_URL_HERE' '$x|@uri'`
+   3. Paste the encoded URL at the end of the webhook proxy base URL (`https://YOUR_API_URL/webhook`).
 2. **Add the webhook to your repository**
-    1. As an administrator, navigate to your repository settings -> Webhooks -> Add webhook
-    2. Paste your webhook proxy URL in the "Payload URL" box. You do not need to worry about "Content type".
-    3. By default, GitHub will only send requests on the "push" event, but you may configure it to send on other events as well.
-    4. Click "Add webhook"
+   1. As an administrator, navigate to your repository settings -> Webhooks -> Add webhook
+   2. Paste your webhook proxy URL in the "Payload URL" box. You do not need to worry about "Content type".
+   3. By default, GitHub will only send requests on the "push" event, but you may configure it to send on other events as well.
+   4. Click "Add webhook"
 
 ### Example Webhook Proxy URL Creation
 
@@ -116,13 +119,14 @@ the `endpointId` to make it a valid URL.
 
 The Lambda then performs the following validations:
 
-* The request must have an enterprise slug which matches the `enterprise_slug` environment variable, OR the request must
+- The request must have an enterprise slug which matches the `enterprise_slug` environment variable, OR the request must
   come from a personal repository where the username ends in the enterprise managed user suffix (if provided).
   The user suffix is passed via the `enterprise_managed_user_suffix` Terraform variable.
-* The request host must have an approved destination URL host, which is the decoded `endpointId` specified in the request
+- The request host must have an approved destination URL host, which is the decoded `endpointId` specified in the request
   URL. The list of allowed destination hosts is read from `allowed-destination-hosts.json` in the Lambda layer.
 
 ### TLS Support
+
 If a root and chain certificate are not provided in the Lambda layer, the runtime environment will supply certificates for requests.
 If these certificates are provided, however, the proxy will forward each request with `ca.pem` and `cert.pem` as the
 root and chain, respectively, with the root certificate appended to the [Mozilla CA certificate store](https://curl.se/docs/caextract.html).
@@ -136,14 +140,16 @@ receives from the destination. If an unexpected error occurs, the webhook proxy 
 ## Repository Overview
 
 ### Terraform Module
+
 This repository contains Terraform (`*.tf`) files which are intended to be consumed as a Terraform module.
 The files are generally organized by resource type. See the "Resources" section in [USAGE.md](https://github.com/ExpediaGroup/github-webhook-proxy/tree/main/USAGE.md) for more infrastructure details.
 
 ### Lambda Function
+
 The Lambda function is a Node.js Lambda compiled from Typescript, and lives in the ["lambda" directory](https://github.com/ExpediaGroup/github-webhook-proxy/tree/main/lambda).
 
 ### GitHub IP Range Allowlist
+
 This repo has a GitHub Actions [workflow](https://github.com/ExpediaGroup/github-webhook-proxy/tree/main/.github/workflows/github-ip-ranges.yml) which checks that the [GitHub Hooks IP Ranges file](https://github.com/ExpediaGroup/github-webhook-proxy/tree/main/github-hooks-ip-ranges.tf) is up to date.
 It runs a script once a day which calls https://api.github.com/meta and ensures the IP ranges in "hooks" match our current IP allowlist in the API Gateway.
 If the list is out of date, it will create a PR to update it.
-
