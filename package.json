@@ -1,26 +1,26 @@
 {
   "name": "github-webhook-proxy",
   "main": "lambdas/proxy/index.js",
+  "type": "module",
   "scripts": {
-    "build": "tsc",
-    "format": "prettier --write ./**/*.ts",
-    "format-check": "prettier --check **/*.ts",
-    "test": "jest --silent"
+    "build": "bun build lambda/proxy.ts --outdir build/ --target node",
+    "format": "prettier --write .",
+    "format-check": "prettier --check",
+    "test": "bun jest"
   },
   "dependencies": {
     "axios": "1.6.8",
     "lodash.mapkeys": "4.6.0",
-    "query-string": "7.1.3",
-    "zod": "3.22.4"
+    "query-string": "9.0.0",
+    "zod": "3.23.3"
   },
   "devDependencies": {
-    "@octokit/webhooks": "13.2.4",
+    "@octokit/webhooks": "13.2.5",
     "@swc/jest": "0.2.36",
     "@types/aws-lambda": "8.10.137",
     "@types/jest": "29.5.12",
     "@types/lodash.mapkeys": "4.6.9",
     "@types/micromatch": "4.0.7",
-    "@types/node": "20.12.7",
     "jest": "29.7.0",
     "prettier": "3.2.5",
     "typescript": "5.4.5"
@@ -29,6 +29,12 @@
     "transform": {
       "^.+\\.(t|j)sx?$": "@swc/jest"
     },
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
     "clearMocks": true
   }

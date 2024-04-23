@@ -51,7 +51,7 @@ jobs:
         uses: ExpediaGroup/github-helpers@v1
         with:
           helper: create-pr
-          title: 'fix: update Github IP ranges'
+          title: "fix: update Github IP ranges"
           body: The GitHub IP ranges for hooks have changed on the [meta endpoint](https://api.github.com/meta).
           head: github-ip-range-update
           github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}

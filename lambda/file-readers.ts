@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync } from "fs";
 
 export function readFileFromLayer(fileName: string) {
   const filePath = `/opt/layer/${fileName}`;
@@ -23,5 +23,5 @@ export function readFileFromLayer(fileName: string) {
 }
 
 export function getPublicCerts() {
-  return readFileSync('build/public-certs.pem').toString();
+  return readFileSync("build/public-certs.pem").toString();
 }

@@ -36,11 +36,70 @@
       "type": "metric",
       "properties": {
         "metrics": [
-          [ "AWS/ApiGateway", "Latency", "ApiName", "gwp-default-ingress", "Resource", "/webhook/{endpointId}", "Stage", "v1", "Method", "POST" ],
-          [ ".", "Count", ".", ".", ".", ".", ".", ".", ".", ".", { "visible": false } ],
-          [ ".", "IntegrationLatency", ".", ".", ".", ".", ".", ".", ".", ".", { "visible": false } ],
-          [ ".", "4XXError", ".", ".", ".", ".", ".", ".", ".", ".", { "visible": false } ],
-          [ ".", "5XXError", ".", ".", ".", ".", ".", ".", ".", ".", { "visible": false } ]
+          [
+            "AWS/ApiGateway",
+            "Latency",
+            "ApiName",
+            "gwp-default-ingress",
+            "Resource",
+            "/webhook/{endpointId}",
+            "Stage",
+            "v1",
+            "Method",
+            "POST"
+          ],
+          [
+            ".",
+            "Count",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            { "visible": false }
+          ],
+          [
+            ".",
+            "IntegrationLatency",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            { "visible": false }
+          ],
+          [
+            ".",
+            "4XXError",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            { "visible": false }
+          ],
+          [
+            ".",
+            "5XXError",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            ".",
+            { "visible": false }
+          ]
         ],
         "view": "timeSeries",
         "region": "us-west-2",
@@ -58,7 +117,18 @@
       "type": "metric",
       "properties": {
         "metrics": [
-          [ "AWS/ApiGateway", "Count", "ApiName", "gwp-default-ingress", "Resource", "/webhook/{endpointId}", "Stage", "v1", "Method", "POST" ]
+          [
+            "AWS/ApiGateway",
+            "Count",
+            "ApiName",
+            "gwp-default-ingress",
+            "Resource",
+            "/webhook/{endpointId}",
+            "Stage",
+            "v1",
+            "Method",
+            "POST"
+          ]
         ],
         "view": "timeSeries",
         "region": "us-west-2",
