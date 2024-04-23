@@ -13,10 +13,8 @@ limitations under the License.
 
 import { EnterpriseProxyEvent } from "./types";
 
-export function requestPayloadIsValid({
-  sender,
-  enterprise,
-}: EnterpriseProxyEvent) {
+export function requestPayloadIsValid(payload?: EnterpriseProxyEvent) {
+  const { sender, enterprise } = payload ?? {};
   return (
     requestCameFromValidEnterprise(enterprise) ||
     senderLoginEndsWithUserSuffix(sender?.login)

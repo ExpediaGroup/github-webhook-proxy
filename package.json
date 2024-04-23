@@ -1,5 +1,6 @@
 {
   "name": "github-webhook-proxy",
+  "packageManager": "bun@1.1.4",
   "main": "lambdas/proxy/index.js",
   "type": "module",
   "scripts": {
@@ -11,7 +12,6 @@
   "dependencies": {
     "axios": "1.6.8",
     "lodash.mapkeys": "4.6.0",
-    "query-string": "9.0.0",
     "zod": "3.23.3"
   },
   "devDependencies": {

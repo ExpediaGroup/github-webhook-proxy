@@ -12,17 +12,27 @@ limitations under the License.
 */
 
 import { IncomingHttpHeaders } from "http";
-import queryString from "query-string";
 import { bodySchema, CONTENT_TYPES, headersSchema } from "./schema";
+import { EnterpriseProxyEvent } from "./types";
 
-export function parseRequestBody(body: string, headers: IncomingHttpHeaders) {
+export function parseRequestBody(
+  body: string,
+  headers: IncomingHttpHeaders,
+): EnterpriseProxyEvent | undefined {
   const headersResult = headersSchema.parse(headers);
   const contentType = headersResult["content-type"];
-  switch (contentType) {
-    case CONTENT_TYPES.JSON:
-      return JSON.parse(body);
-    case CONTENT_TYPES.URL_ENCODED:
-      const { payload } = bodySchema.parse(queryString.parse(body));
-      return JSON.parse(decodeURIComponent(payload));
+  try {
+    switch (contentType) {
+      case CONTENT_TYPES.JSON:
+        return JSON.parse(body);
+      case CONTENT_TYPES.URL_ENCODED:
+        const params = new URLSearchParams(body);
+        const payloadParam = params.get("payload");
+        const { payload } = bodySchema.parse(payloadParam);
+        return JSON.parse(decodeURIComponent(payload));
+    }
+  } catch (error) {
+    console.error(`Error parsing request body: ${error}`);
+    return undefined;
   }
 }

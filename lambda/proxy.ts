@@ -37,10 +37,7 @@ export async function handler(
       return { statusCode: 404, body: "Not found" };
     }
 
-    const requestPayload: EnterpriseProxyEvent = parseRequestBody(
-      body,
-      headers,
-    );
+    const requestPayload = parseRequestBody(body, headers);
     const url = decodeURIComponent(endpointId);
 
     if (
