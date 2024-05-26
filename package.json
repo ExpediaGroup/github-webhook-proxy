@@ -10,7 +10,7 @@
     "test": "bun jest"
   },
   "dependencies": {
-    "axios": "1.6.8",
+    "axios": "1.7.2",
     "lodash.mapkeys": "4.6.0",
     "zod": "3.23.8"
   },
