@@ -15,6 +15,10 @@
       "matchUpdateTypes": ["patch", "minor"],
       "groupName": "dependencies",
       "automerge": true
+    },
+    {
+      "groupName": "devDependencies",
+      "matchPackagePatterns": ["terraform"]
     }
   ]
 }
