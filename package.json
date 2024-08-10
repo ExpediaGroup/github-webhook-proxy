@@ -17,7 +17,7 @@
   "devDependencies": {
     "@octokit/webhooks": "13.3.0",
     "@swc/jest": "0.2.36",
-    "@types/aws-lambda": "8.10.142",
+    "@types/aws-lambda": "8.10.143",
     "@types/jest": "29.5.12",
     "@types/lodash.mapkeys": "4.6.9",
     "@types/micromatch": "4.0.9",
