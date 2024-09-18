@@ -42,7 +42,7 @@ jobs:
           token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Terraform Docs
-        uses: terraform-docs/gh-actions@v1.2.0
+        uses: terraform-docs/gh-actions@v1.2.2
         with:
           git-push: true
           output-file: USAGE.md
