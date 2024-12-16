@@ -10,9 +10,9 @@
     "test": "bun jest"
   },
   "dependencies": {
-    "axios": "1.7.8",
+    "axios": "1.7.9",
     "lodash.mapkeys": "4.6.0",
-    "zod": "3.23.8"
+    "zod": "3.24.1"
   },
   "devDependencies": {
     "@octokit/webhooks": "13.4.1",
@@ -22,7 +22,7 @@
     "@types/lodash.mapkeys": "4.6.9",
     "@types/micromatch": "4.0.9",
     "jest": "29.7.0",
-    "prettier": "3.4.1",
+    "prettier": "3.4.2",
     "typescript": "5.7.2"
   },
   "jest": {
