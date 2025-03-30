@@ -58,6 +58,8 @@ jobs:
 
       - name: Setup
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
 
       - name: Terraform Init
         run: terraform init -backend=false
