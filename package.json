@@ -15,7 +15,7 @@
     "zod": "3.24.2"
   },
   "devDependencies": {
-    "@octokit/webhooks": "13.8.0",
+    "@octokit/webhooks": "14.0.0",
     "@swc/jest": "0.2.37",
     "@types/aws-lambda": "8.10.148",
     "@types/jest": "29.5.14",
