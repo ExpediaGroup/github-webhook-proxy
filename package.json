@@ -12,10 +12,10 @@
   "dependencies": {
     "axios": "1.9.0",
     "lodash.mapkeys": "4.6.0",
-    "zod": "3.25.28"
+    "zod": "3.25.61"
   },
   "devDependencies": {
-    "@octokit/webhooks": "14.0.0",
+    "@octokit/webhooks": "14.0.2",
     "@swc/jest": "0.2.38",
     "@types/aws-lambda": "8.10.149",
     "@types/jest": "29.5.14",
