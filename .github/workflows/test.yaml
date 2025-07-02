@@ -65,10 +65,10 @@ jobs:
         run: terraform init -backend=false
 
       - name: Terraform Validate
-        uses: dflook/terraform-validate@v1
+        uses: dflook/terraform-validate@v2
 
       - name: Terraform FMT
-        uses: dflook/terraform-fmt@v1
+        uses: dflook/terraform-fmt@v2
 
       - name: Terraform Lint
         uses: reviewdog/action-tflint@v1
