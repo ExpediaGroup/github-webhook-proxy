@@ -52,10 +52,7 @@ const fileMap: Record<string, string> = {
     "a.wildcard.*.host",
   ]),
 };
-const readFileFromLayerMock = mock((fileName: string) => {
-  console.log("the file name", fileName);
-  return fileMap[fileName];
-});
+const readFileFromLayerMock = mock((fileName: string) => fileMap[fileName]);
 mock.module("./file-readers", () => ({
   readFileFromLayer: readFileFromLayerMock,
   getPublicCerts: mock(),
@@ -235,10 +232,9 @@ describe("proxy", () => {
       "ca.pem": "some ca",
       "cert.pem": "some cert",
     };
-    readFileFromLayerMock.mockImplementation((fileName: string) => {
-      console.log("the file name is", fileName);
-      return newFileMap[fileName];
-    });
+    readFileFromLayerMock.mockImplementation(
+      (fileName: string) => newFileMap[fileName],
+    );
     const destinationUrl = "https://approved.host/github-webhook/";
     const endpointId = encodeURIComponent(destinationUrl);
     const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
