@@ -6,12 +6,13 @@
   "scripts": {
     "build": "bun build lambda/proxy.ts --outdir build/ --target node",
     "format": "prettier --write .",
-    "format-check": "prettier --check",
+    "format-check": "prettier --check .",
     "test": "bun test"
   },
   "dependencies": {
     "axios": "1.13.1",
     "lodash.mapkeys": "4.6.0",
+    "micromatch": "4.0.8",
     "zod": "4.1.12"
   },
   "devDependencies": {
