@@ -20,7 +20,7 @@ where "my-new-feature" describes what you're working on.
 
 ### 3. Add tests for any bug fixes or new functionality
 
-All functions must be tested with a unit test. Please follow the existing convention of one exported function per file with a corresponding file to test it. Run tests using `yarn test`, or using the [Jest CLI](https://jestjs.io/docs/cli).
+All functions must be tested with a unit test. Please follow the existing convention of one exported function per file with a corresponding file to test it. Run tests using `bun test`.
 
 There is also an integration test present in the [test workflow](./.github/workflows/test.yaml), which will actually run this Github Action using the code from this repository. This allows you to test your change to the Github Action right within the pull request you make.
 

@@ -17,7 +17,6 @@ import { requestPayloadIsValid } from "./request-payload-is-valid";
 import { destinationHostIsAllowed } from "./destination-host-is-allowed";
 import { getHttpsAgent } from "./get-https-agent";
 import { parseRequestBody } from "./parse-request-body";
-import { EnterpriseProxyEvent } from "./types";
 import { urlIsValid } from "./url-is-valid";
 import { axiosErrorSchema } from "./schema";
 

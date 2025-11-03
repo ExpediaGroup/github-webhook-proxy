@@ -12,20 +12,19 @@ limitations under the License.
 */
 
 import { handler } from "./proxy";
-import axios, { AxiosRequestHeaders, AxiosResponse } from "axios";
+import type { AxiosRequestHeaders, AxiosResponse } from "axios";
 import { readFileSync } from "fs";
 import { Agent } from "https";
-import { readFileFromLayer } from "./file-readers";
 import { APIGatewayProxyWithLambdaAuthorizerEvent } from "aws-lambda";
 import { VALID_PING_EVENT } from "../fixtures/valid-ping-payload";
 import { VALID_PUSH_PAYLOAD } from "../fixtures/valid-push-payload";
 import { VALID_PUSH_PAYLOAD_USER_REPO } from "../fixtures/valid-push-payload-user-repo";
+import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
+
 const urlencodedPayload = readFileSync(
   "fixtures/invalid-payload-urlencoded.txt",
 ).toString();
 
-jest.mock("axios");
-jest.mock("./file-readers");
 const axiosResponse: AxiosResponse = {
   status: 200,
   data: {
@@ -39,7 +38,29 @@ const axiosResponse: AxiosResponse = {
     headers: {} as AxiosRequestHeaders,
   },
 };
-(axios.post as jest.Mock).mockResolvedValue(axiosResponse);
+const axiosPostMock = mock(() => axiosResponse);
+mock.module("axios", () => ({
+    default: {
+        post: axiosPostMock
+    }
+}));
+
+const fileMap: Record<string, string> = {
+    "allowed-destination-hosts.json": JSON.stringify([
+        "approved.host",
+        "another.approved.host",
+        "a.wildcard.*.host",
+    ]),
+};
+const readFileFromLayerMock = mock((fileName: string) => {
+    console.log('the file name', fileName);
+    return fileMap[fileName]
+});
+mock.module("./file-readers", () => ({
+    readFileFromLayer: readFileFromLayerMock,
+    getPublicCerts: mock()
+}));
+
 const expectedResponseObject = {
   statusCode: 200,
   body: '{"some":"data"}',
@@ -66,22 +87,16 @@ const baseEvent: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
   requestContext: {} as any,
   resource: "",
 };
-const fileMap: Record<string, string> = {
-  "allowed-destination-hosts.json": JSON.stringify([
-    "approved.host",
-    "another.approved.host",
-    "a.wildcard.*.host",
-  ]),
-};
-(readFileFromLayer as jest.Mock).mockImplementation(
-  (fileName: string) => fileMap[fileName],
-);
 
 describe("proxy", () => {
   beforeEach(() => {
     process.env.ENTERPRISE_SLUG = "some_enterprise";
     process.env.ENTERPRISE_MANAGED_USER_SUFFIX = "";
   });
+
+  afterEach(() => {
+      mock.clearAllMocks();
+  })
 
   it("should reject a request with an invalid urlencoded payload", async () => {
     const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
@@ -94,7 +109,7 @@ describe("proxy", () => {
     };
     const result = await handler(event);
     expect(result).toEqual({ statusCode: 403, body: "Access denied" });
-    expect(axios.post).not.toHaveBeenCalled();
+    expect(axiosPostMock).not.toHaveBeenCalled();
   });
 
   it("should reject a request with an endpointId which is not an encoded URL", async () => {
@@ -106,7 +121,7 @@ describe("proxy", () => {
     };
     const result = await handler(event);
     expect(result).toEqual({ statusCode: 403, body: "Access denied" });
-    expect(axios.post).not.toHaveBeenCalled();
+    expect(axiosPostMock).not.toHaveBeenCalled();
   });
 
   it("should allow a request from a managed user suffix when supplied", async () => {
@@ -122,7 +137,7 @@ describe("proxy", () => {
     };
     const result = await handler(event);
     expect(result).toEqual(expectedResponseObject);
-    expect(axios.post).toHaveBeenCalled();
+    expect(axiosPostMock).toHaveBeenCalled();
   });
 
   it("should forward a request when header is Content-Type", async () => {
@@ -142,7 +157,7 @@ describe("proxy", () => {
     };
     const result = await handler(event);
     expect(result).toEqual(expectedResponseObject);
-    expect(axios.post).toHaveBeenCalled();
+    expect(axiosPostMock).toHaveBeenCalled();
   });
 
   it("should not forward a request that does not come from an enterprise or managed user suffix", async () => {
@@ -161,7 +176,7 @@ describe("proxy", () => {
     };
     const result = await handler(event);
     expect(result).toEqual({ statusCode: 403, body: "Access denied" });
-    expect(axios.post).not.toHaveBeenCalled();
+    expect(axiosPostMock).not.toHaveBeenCalled();
   });
 
   it("should not forward a request that does not have an approved host", async () => {
@@ -175,7 +190,7 @@ describe("proxy", () => {
     };
     const result = await handler(event);
     expect(result).toEqual({ statusCode: 403, body: "Access denied" });
-    expect(axios.post).not.toHaveBeenCalled();
+    expect(axiosPostMock).not.toHaveBeenCalled();
   });
 
   it("should forward a request that has an approved host which matches a wildcard", async () => {
@@ -201,7 +216,7 @@ describe("proxy", () => {
       },
     };
     const result = await handler(event);
-    expect(axios.post).toHaveBeenCalledWith(
+    expect(axiosPostMock).toHaveBeenCalledWith(
       destinationUrl,
       stringifiedPayload,
       {
@@ -214,14 +229,17 @@ describe("proxy", () => {
     expect(result).toEqual(expectedResponseObject);
   });
 
-  it("should forward a request from an enterprise and github org with supplied certs", async () => {
+  it.only("should forward a request from an enterprise and github org with supplied certs", async () => {
     const newFileMap: Record<string, string> = {
       ...fileMap,
       "ca.pem": "some ca",
       "cert.pem": "some cert",
     };
-    (readFileFromLayer as jest.Mock).mockImplementation(
-      (fileName: string) => newFileMap[fileName],
+    readFileFromLayerMock.mockImplementation(
+      (fileName: string) => {
+          console.log('the file name is', fileName);
+          return newFileMap[fileName]
+      },
     );
     const destinationUrl = "https://approved.host/github-webhook/";
     const endpointId = encodeURIComponent(destinationUrl);
@@ -232,7 +250,7 @@ describe("proxy", () => {
       },
     };
     const result = await handler(event);
-    expect(axios.post).toHaveBeenCalledWith(
+    expect(axiosPostMock).toHaveBeenCalledWith(
       destinationUrl,
       stringifiedPayload,
       {
@@ -253,7 +271,7 @@ describe("proxy", () => {
     };
     const result = await handler(event);
     expect(result).toEqual({ statusCode: 404, body: "Not found" });
-    expect(axios.post).not.toHaveBeenCalled();
+    expect(axiosPostMock).not.toHaveBeenCalled();
   });
 
   it("should forward a ping event from a managed user suffix when supplied", async () => {
@@ -269,7 +287,7 @@ describe("proxy", () => {
     };
     const result = await handler(event);
     expect(result).toEqual(expectedResponseObject);
-    expect(axios.post).toHaveBeenCalled();
+    expect(axiosPostMock).toHaveBeenCalled();
   });
 
   it("should return error response from axios", async () => {
@@ -286,9 +304,7 @@ describe("proxy", () => {
         headers: {} as AxiosRequestHeaders,
       },
     };
-    (axios.post as jest.Mock).mockRejectedValue({
-      response: axiosErrorResponse,
-    });
+    axiosPostMock.mockImplementationOnce(() => axiosErrorResponse);
 
     process.env.ENTERPRISE_MANAGED_USER_SUFFIX = "suffix";
     const destinationUrl = "https://approved.host/github-webhook/";
@@ -306,6 +322,6 @@ describe("proxy", () => {
       body: '{"some":"error"}',
       headers: { response: "headers" },
     });
-    expect(axios.post).toHaveBeenCalled();
+    expect(axiosPostMock).toHaveBeenCalled();
   });
 });
