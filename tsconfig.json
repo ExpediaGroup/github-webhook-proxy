@@ -5,7 +5,6 @@
     "moduleResolution": "node",
     "module": "esnext",
     "target": "esnext",
-    "types": ["jest", "node"],
     "noEmit": true,
     "noImplicitAny": true,
     "noUncheckedIndexedAccess": true,
