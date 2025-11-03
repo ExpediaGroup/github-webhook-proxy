@@ -40,25 +40,25 @@ const axiosResponse: AxiosResponse = {
 };
 const axiosPostMock = mock(() => axiosResponse);
 mock.module("axios", () => ({
-    default: {
-        post: axiosPostMock
-    }
+  default: {
+    post: axiosPostMock,
+  },
 }));
 
 const fileMap: Record<string, string> = {
-    "allowed-destination-hosts.json": JSON.stringify([
-        "approved.host",
-        "another.approved.host",
-        "a.wildcard.*.host",
-    ]),
+  "allowed-destination-hosts.json": JSON.stringify([
+    "approved.host",
+    "another.approved.host",
+    "a.wildcard.*.host",
+  ]),
 };
 const readFileFromLayerMock = mock((fileName: string) => {
-    console.log('the file name', fileName);
-    return fileMap[fileName]
+  console.log("the file name", fileName);
+  return fileMap[fileName];
 });
 mock.module("./file-readers", () => ({
-    readFileFromLayer: readFileFromLayerMock,
-    getPublicCerts: mock()
+  readFileFromLayer: readFileFromLayerMock,
+  getPublicCerts: mock(),
 }));
 
 const expectedResponseObject = {
@@ -95,8 +95,8 @@ describe("proxy", () => {
   });
 
   afterEach(() => {
-      mock.clearAllMocks();
-  })
+    mock.clearAllMocks();
+  });
 
   it("should reject a request with an invalid urlencoded payload", async () => {
     const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
@@ -235,12 +235,10 @@ describe("proxy", () => {
       "ca.pem": "some ca",
       "cert.pem": "some cert",
     };
-    readFileFromLayerMock.mockImplementation(
-      (fileName: string) => {
-          console.log('the file name is', fileName);
-          return newFileMap[fileName]
-      },
-    );
+    readFileFromLayerMock.mockImplementation((fileName: string) => {
+      console.log("the file name is", fileName);
+      return newFileMap[fileName];
+    });
     const destinationUrl = "https://approved.host/github-webhook/";
     const endpointId = encodeURIComponent(destinationUrl);
     const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
