@@ -226,7 +226,7 @@ describe("proxy", () => {
     expect(result).toEqual(expectedResponseObject);
   });
 
-  it.only("should forward a request from an enterprise and github org with supplied certs", async () => {
+  it("should forward a request from an enterprise and github org with supplied certs", async () => {
     const newFileMap: Record<string, string> = {
       ...fileMap,
       "ca.pem": "some ca",
