@@ -1,18 +1,28 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["local>ExpediaGroup/renovate-config"],
+  "extends": [
+    "local>ExpediaGroup/renovate-config"
+  ],
   "assignAutomerge": true,
   "assigneesFromCodeOwners": true,
   "packageRules": [
     {
-      "matchDepTypes": ["dependencies", "devDependencies"],
-      "matchUpdateTypes": ["patch", "minor"],
+      "matchDepTypes": [
+        "dependencies",
+        "devDependencies"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
       "groupName": "dependencies",
       "automerge": true
     },
     {
-      "matchPackagePatterns": ["terraform"],
-      "groupName": "dependencies"
+      "groupName": "dependencies",
+      "matchPackageNames": [
+        "/terraform/"
+      ]
     }
   ]
 }
