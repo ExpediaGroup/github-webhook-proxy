@@ -11,7 +11,7 @@
       "automerge": true
     },
     {
-      "matchPackagePatterns": ["terraform"],
+      "matchPackageNames": ["/terraform/"],
       "groupName": "dependencies"
     }
   ]
