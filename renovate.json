@@ -11,6 +11,10 @@
       "groupName": "dependencies"
     },
     {
+      "matchPackageNames": ["/terraform/"],
+      "groupName": "dependencies"
+    },
+    {
       "matchManagers": ["custom.regex"],
       "matchPackageNames": ["bun"],
       "groupName": "dependencies"
