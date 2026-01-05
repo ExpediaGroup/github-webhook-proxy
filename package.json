@@ -13,7 +13,7 @@
     "axios": "1.13.2",
     "lodash.mapkeys": "4.6.0",
     "micromatch": "4.0.8",
-    "zod": "4.2.1"
+    "zod": "4.3.5"
   },
   "devDependencies": {
     "@octokit/webhooks": "14.2.0",
