@@ -1,9 +1,9 @@
 name: Check Github IP Ranges
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * 0" # once a week
+  pull_request:
+    branches:
+      - main
 
 jobs:
   check:
@@ -48,7 +48,7 @@ jobs:
 
       - if: steps.ip-check.outputs.NEW_IP_RANGES == 'true'
         name: Open Pull Request if IP Ranges Have Changed
-        uses: ExpediaGroup/github-helpers@v1
+        uses: ExpediaGroup/github-helpers@revert-771-revert-770-revert-769-revert-768-node-24
         with:
           helper: create-pr
           title: "fix: update Github IP ranges"
