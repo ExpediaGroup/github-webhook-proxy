@@ -17,7 +17,7 @@ jobs:
           token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
 
       - name: test
-        uses: ExpediaGroup/github-helpers@revert-771-revert-770-revert-769-revert-768-node-24
+        uses: ExpediaGroup/github-helpers@v1
         with:
           helper: set-commit-status
           sha: ${{ github.event.pull_request.head.sha }}
