@@ -22,6 +22,6 @@
     "@types/lodash.mapkeys": "4.6.9",
     "@types/micromatch": "4.0.10",
     "prettier": "3.8.1",
-    "typescript": "5.9.3"
+    "typescript": "6.0.2"
   }
 }
