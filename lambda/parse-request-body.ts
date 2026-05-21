@@ -27,9 +27,20 @@ export function parseRequestBody(
         return JSON.parse(body);
       case CONTENT_TYPES.URL_ENCODED:
         const params = new URLSearchParams(body);
-        const payloadParam = params.get("payload");
-        const { payload } = bodySchema.parse(payloadParam);
-        return JSON.parse(decodeURIComponent(payload));
+        // bodySchema is `z.object({ payload: z.string() })`, so wrap the
+        // URLSearchParams.get() value (a `string | null`) in that shape
+        // before validating; passing the raw string failed schema parsing
+        // and broke every valid urlencoded webhook.
+        const { payload } = bodySchema.parse({
+          payload: params.get("payload"),
+        });
+        // URLSearchParams.get already URL-decodes the value, so `payload`
+        // is already the JSON string sent by GitHub. A second
+        // decodeURIComponent would throw URIError on any bare '%' that
+        // appears as literal user content (e.g. "30% threshold" in a PR
+        // title) and is unnecessary because GitHub webhooks are
+        // single-URL-encoded per the form-urlencoded spec.
+        return JSON.parse(payload);
     }
   } catch (error) {
     console.error(`Error parsing request body: ${error}`);
