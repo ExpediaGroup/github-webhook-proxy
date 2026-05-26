@@ -321,10 +321,6 @@ describe("proxy", () => {
   });
 
   it("should forward a urlencoded webhook whose JSON contains literal '%' characters", async () => {
-    // Regression: bare '%' in PR titles / commit messages / comments (e.g.
-    // "30% threshold") previously caused parseRequestBody to throw URIError
-    // because of a redundant decodeURIComponent(payload) after
-    // URLSearchParams.get() had already URL-decoded the value.
     const payloadWithPercent = {
       ...VALID_PUSH_PAYLOAD,
       head_commit: {
@@ -353,11 +349,6 @@ describe("proxy", () => {
 });
 
 describe("parseRequestBody — urlencoded payloads with literal '%' characters", () => {
-  // The URL_ENCODED branch used to call JSON.parse(decodeURIComponent(payload)).
-  // URLSearchParams.get() already URL-decodes once, so the second decode would
-  // throw URIError: URI malformed on any string whose decoded form contains a
-  // bare '%' not followed by two hex digits — which is common in real PR
-  // titles, bodies, and comments. These tests pin the fix.
   const headers = { "content-type": "application/x-www-form-urlencoded" };
 
   const cases: Array<{ label: string; userContent: string }> = [
@@ -404,10 +395,6 @@ describe("parseRequestBody — urlencoded payloads with literal '%' characters",
   });
 
   it("correctly preserves valid percent-escapes (%20 → space) inside JSON string values", () => {
-    // A PR description that documents URL encoding by writing '%20' literally
-    // should reach the parsed JSON value as the literal string '%20', NOT as
-    // a decoded space. URLSearchParams.get() decodes the OUTER encoding once;
-    // characters inside the JSON string value are preserved verbatim.
     const literalText = "encoded as %20 example";
     const json = JSON.stringify({ comment: { body: literalText } });
     const body = "payload=" + encodeURIComponent(json);
