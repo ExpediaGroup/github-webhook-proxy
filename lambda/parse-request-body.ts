@@ -27,9 +27,10 @@ export function parseRequestBody(
         return JSON.parse(body);
       case CONTENT_TYPES.URL_ENCODED:
         const params = new URLSearchParams(body);
-        const payloadParam = params.get("payload");
-        const { payload } = bodySchema.parse(payloadParam);
-        return JSON.parse(decodeURIComponent(payload));
+        const { payload } = bodySchema.parse({
+          payload: params.get("payload"),
+        });
+        return JSON.parse(payload);
     }
   } catch (error) {
     console.error(`Error parsing request body: ${error}`);

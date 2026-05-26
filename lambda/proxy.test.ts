@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import { handler } from "./proxy";
+import { parseRequestBody } from "./parse-request-body";
 import type { AxiosRequestHeaders, AxiosResponse } from "axios";
 import { readFileSync } from "fs";
 import { Agent } from "https";
@@ -317,5 +318,87 @@ describe("proxy", () => {
       headers: { response: "headers" },
     });
     expect(axiosPostMock).toHaveBeenCalled();
+  });
+
+  it("should forward a urlencoded webhook whose JSON contains literal '%' characters", async () => {
+    const payloadWithPercent = {
+      ...VALID_PUSH_PAYLOAD,
+      head_commit: {
+        ...(VALID_PUSH_PAYLOAD as any).head_commit,
+        message:
+          "Roll out 30% threshold; reference %USERPROFILE% on Windows; WHERE x LIKE '%foo%'",
+      },
+    };
+    const urlencodedBody =
+      "payload=" + encodeURIComponent(JSON.stringify(payloadWithPercent));
+    const destinationUrl = "https://approved.host/github-webhook/";
+    const endpointId = encodeURIComponent(destinationUrl);
+    const event: APIGatewayProxyWithLambdaAuthorizerEvent<any> = {
+      ...baseEvent,
+      headers: {
+        ...baseEvent.headers,
+        "content-type": "application/x-www-form-urlencoded",
+      },
+      body: urlencodedBody,
+      pathParameters: { endpointId },
+    };
+    const result = await handler(event);
+    expect(result).toEqual(expectedResponseObject);
+    expect(axiosPostMock).toHaveBeenCalled();
+  });
+});
+
+describe("parseRequestBody — urlencoded payloads with literal '%' characters", () => {
+  const headers = { "content-type": "application/x-www-form-urlencoded" };
+
+  const cases: Array<{ label: string; userContent: string }> = [
+    { label: "percentage in PR title", userContent: "30% threshold rollout" },
+    { label: "trailing percent", userContent: "rate: 5%" },
+    {
+      label: "Windows env var reference",
+      userContent: "set %USERPROFILE% to ~",
+    },
+    {
+      label: "SQL LIKE wildcard",
+      userContent: "WHERE name LIKE '%foo%' AND status = 1",
+    },
+    {
+      label: "C-style format string",
+      userContent: 'printf("%s\\n", val);',
+    },
+    { label: "Go format verb", userContent: 'log.Printf("%v", obj)' },
+    {
+      label: "bare % followed by non-hex",
+      userContent: "look here: %g and %h",
+    },
+  ];
+
+  for (const c of cases) {
+    it(`parses a webhook whose JSON contains literal '%' (${c.label})`, () => {
+      const json = JSON.stringify({
+        action: "opened",
+        pull_request: { title: c.userContent, body: c.userContent },
+      });
+      const body = "payload=" + encodeURIComponent(json);
+      const result = parseRequestBody(body, headers);
+      expect(result).toBeDefined();
+      expect((result as any).pull_request.title).toBe(c.userContent);
+    });
+  }
+
+  it("still parses payloads with no '%' characters (control)", () => {
+    const json = JSON.stringify({ action: "opened", number: 42 });
+    const body = "payload=" + encodeURIComponent(json);
+    const result = parseRequestBody(body, headers);
+    expect(result).toBeDefined();
+    expect((result as any).number).toBe(42);
+  });
+
+  it("correctly preserves valid percent-escapes (%20 → space) inside JSON string values", () => {
+    const literalText = "encoded as %20 example";
+    const json = JSON.stringify({ comment: { body: literalText } });
+    const body = "payload=" + encodeURIComponent(json);
+    const result = parseRequestBody(body, headers);
+    expect((result as any).comment.body).toBe(literalText);
   });
 });
