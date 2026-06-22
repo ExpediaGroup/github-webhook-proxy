@@ -57,7 +57,7 @@ jobs:
         run: echo TF_VERSION=`cat .terraform-version` >> $GITHUB_ENV
 
       - name: Setup
-        uses: hashicorp/setup-terraform@v4
+        uses: hashicorp/setup-terraform@v4.0.1
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
@@ -65,10 +65,10 @@ jobs:
         run: terraform init -backend=false
 
       - name: Terraform Validate
-        uses: dflook/terraform-validate@v2
+        uses: dflook/terraform-validate@v2.2.3
 
       - name: Terraform FMT
-        uses: dflook/terraform-fmt@v2
+        uses: dflook/terraform-fmt@v2.2.3
 
       - name: Terraform Lint
         uses: reviewdog/action-tflint@v1
