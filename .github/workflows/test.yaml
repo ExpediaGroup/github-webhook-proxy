@@ -29,6 +29,24 @@ jobs:
       - name: Build
         run: bun run build
 
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          # Keep in sync with the Lambda runtime in lambda.tf
+          node-version: 20
+
+      - name: Smoke Test Lambda Bundle
+        # Load the bundle from a directory holding only what publish.yaml zips, so the repo's
+        # package.json can't mark it as ESM. Module syntax detection is disabled to match Lambda.
+        run: |
+          mkdir -p "$RUNNER_TEMP/lambda"
+          cp -r build node_modules "$RUNNER_TEMP/lambda/"
+          cd "$RUNNER_TEMP/lambda"
+          node --no-experimental-detect-module --input-type=module -e "
+            const { handler } = await import('./build/proxy.js');
+            if (typeof handler !== 'function') throw new Error('build/proxy.js does not export handler');
+          "
+
       - name: Test
         run: bun run test
 
