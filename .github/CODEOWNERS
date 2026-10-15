@@ -2,4 +2,4 @@
 # Each line is a file pattern (for a specific dir) followed by one or more owners.
 
 # Default owners will be asked to review when someone opens a pull request.
-# *       @github-webhook-proxy-admins
+*       @github-webhook-proxy-admins
