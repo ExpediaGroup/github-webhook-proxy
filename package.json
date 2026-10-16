@@ -4,7 +4,7 @@
   "main": "lambdas/proxy/index.js",
   "type": "module",
   "scripts": {
-    "build": "bun build lambda/proxy.ts --outdir build/ --target node && echo '{\"type\": \"module\"}' > build/package.json",
+    "build": "bun build lambda/proxy.ts --outdir build/ --target node --format cjs",
     "package": "zip -r -qq proxy-lambda.zip build node_modules",
     "format": "prettier --write .",
     "format-check": "prettier --check .",
