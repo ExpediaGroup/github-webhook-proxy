@@ -29,6 +29,23 @@ jobs:
       - name: Build
         run: bun run build
 
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          # Keep in sync with the Lambda runtime in lambda.tf
+          node-version: 20
+
+      - name: Smoke Test Lambda Bundle
+        # Load the handler from the packaged zip the way Lambda does: as CommonJS, with
+        # require(esm) and module syntax detection off, so an ESM bundle fails here too.
+        run: |
+          bun run package
+          unzip -q proxy-lambda.zip -d "$RUNNER_TEMP/lambda"
+          cd "$RUNNER_TEMP/lambda"
+          node --no-experimental-require-module --no-experimental-detect-module -e "
+            if (typeof require('./build/proxy.js').handler !== 'function') throw new Error('build/proxy.js does not export handler');
+          "
+
       - name: Test
         run: bun run test
 
