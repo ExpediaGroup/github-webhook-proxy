@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "bun build lambda/proxy.ts --outdir build/ --target node && echo '{\"type\": \"module\"}' > build/package.json",
+    "package": "zip -r -qq proxy-lambda.zip build node_modules",
     "format": "prettier --write .",
     "format-check": "prettier --check .",
     "test": "bun test"
