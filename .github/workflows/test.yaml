@@ -33,7 +33,7 @@ jobs:
         uses: actions/setup-node@v7
         with:
           # Keep in sync with the Lambda runtime in lambda.tf
-          node-version: 20
+          node-version: 24
 
       - name: Smoke Test Lambda Bundle
         # Load the handler from the packaged zip the way Lambda does: as CommonJS, with
